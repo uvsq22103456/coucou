@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BU-Buddy | Team Hub</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BU-Buddy">
+    <meta name="theme-color" content="#4f46e5">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        :root { 
+            --app-bg: #f8fafc; 
+            --card-bg: #ffffff; 
+            --text-main: #0f172a; 
+            --text-muted: #64748b; 
+            --border-color: #e2e8f0; 
+            --input-bg: #f1f5f9;
+        }
+        .dark-mode { 
+            --app-bg: #020617; 
+            --card-bg: #0f172a; 
+            --text-main: #f1f5f9; 
+            --text-muted: #94a3b8; 
+            --border-color: #1e293b;
+            --input-bg: #1e293b;
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            -webkit-tap-highlight-color: transparent; 
+            overscroll-behavior-y: contain;
+            background-color: var(--app-bg);
+            color: var(--text-main);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .bg-card { background-color: var(--card-bg); border-color: var(--border-color); border-width: 1px; }
+        .tab-active { color: #4f46e5 !important; border-bottom: 3px solid #4f46e5 !important; opacity: 1 !important; }
+        .view-content { animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .crousty-card { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        input, select, textarea {
+            background-color: var(--input-bg) !important;
+            color: var(--text-main) !important;
+            border: 1px solid var(--border-color) !important;
+            outline: none;
+            border-radius: 12px;
+        }
+
+        .grade-input { font-weight: 900; text-align: center; border-radius: 8px; }
+        
+        /* Checkbox stylées pour la bouffe */
+        .food-check:checked + label { background-color: #4f46e5; color: white; border-color: #4f46e5; transform: scale(0.95); }
+        .assign-check:checked + label { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+
+        /* Date format carré original */
+        .date-square {
+            background-color: #4f46e5;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            line-height: 1;
+            flex-shrink: 0;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+
+        /* Chart Vertical Bars */
+        .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
+        .bar-bg { width: 100%; background: rgba(255,255,255,0.1); border-radius: 4px; height: 100%; position: relative; display: flex; align-items: flex-end; overflow: hidden; }
+        .bar-fill { width: 100%; background-color: #6366f1; transition: height 1s ease-out; }
+
+        /* Fix Images & Lignes Notes */
+        #nt-preview { white-space: pre-wrap; word-wrap: break-word; color: var(--text-main); line-height: 1.6; }
+        #nt-preview img { max-width: 100%; border-radius: 1rem; margin: 1.5rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid var(--border-color); }
+        
+        /* Style LaTeX */
+        .katex { font-size: 1.1em; }
+
+        .nt-toolbar-btn { padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.05); font-weight: 900; font-size: 12px; }
+        
+        /* Correction tactile boutons accueil */
+        .btn-home-fix { position: relative; z-index: 30; pointer-events: auto; }
+
+        /* Timer Circle Animation */
+        .timer-circle-svg circle { transition: stroke-dashoffset 1s linear; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <header class="bg-card border-b sticky top-0 z-[100] pt-[env(safe-area-inset-top)] shadow-sm">
+        <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center text-main">
+            <h1 class="text-lg font-extrabold tracking-tight flex items-center gap-2 cursor-pointer" id="logo-main-btn">
+                <span class="text-indigo-600 italic">BU</span>-BUDDY
+            </h1>
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="p-2 w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 transition-all active:scale-90 flex items-center justify-center">
+                    <i data-lucide="moon" id="theme-icon"></i>
+                </button>
+                <div id="status-chip" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700">
+                    <div id="status-dot" class="w-1.5 h-1.5 bg-amber-400 rounded-full"></div>
+                    <span id="status-text" class="text-[8px] font-black uppercase tracking-tighter">patience les apagnans...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="bg-card border-b sticky top-[61px] z-[90] overflow-x-auto no-scrollbar font-bold uppercase text-[10px] tracking-widest">
+        <div class="max-w-xl mx-auto flex px-2 min-w-max">
+            <button id="nav-home" class="nav-btn px-5 py-4 tab-active">Accueil</button>
+            <button id="nav-planning" class="nav-btn px-5 py-4 text-slate-400">Révisions</button>
+            <button id="nav-docs" class="nav-btn px-5 py-4 text-slate-400">Cours</button>
+            <button id="nav-projets" class="nav-btn px-5 py-4 text-slate-400">Projets</button>
+            <button id="nav-notes" class="nav-btn px-5 py-4 text-slate-400">Notes</button>
+            <button id="nav-grades" class="nav-btn px-5 py-4 text-slate-400">Moyennes</button>
+            <button id="nav-food" class="nav-btn px-5 py-4 text-orange-500">Bouffe</button>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-xl mx-auto w-full p-4 pb-32 relative z-10">
+        
+        <div id="view-home" class="view-content space-y-6">
+            <div id="countdown-banner" class="bg-slate-900 rounded-[2rem] p-6 text-white flex items-center justify-between overflow-hidden relative cursor-pointer active:scale-95 shadow-xl">
+                <div class="relative z-10 text-white">
+                    <p class="text-[10px] font-black uppercase text-indigo-400 tracking-widest mb-1 flex items-center gap-1.5">Prochain CC <i data-lucide="edit-3" class="inline w-3 h-3"></i></p>
+                    <div class="flex items-baseline gap-2">
+                        <span id="countdown-days" class="text-4xl font-black">--</span>
+                        <span class="text-xs font-bold text-slate-400 uppercase tracking-tight">jours restants</span>
+                    </div>
+                </div>
+                <i data-lucide="calendar-clock" class="w-16 h-16 text-indigo-500/20 absolute -right-2 rotate-12"></i>
+            </div>
+
+            <div class="crousty-card p-8 rounded-[2.5rem] text-white shadow-2xl">
+                <h2 class="text-2xl font-black mb-2 leading-tight uppercase italic text-white">Sabaidi les Billy Boys et les Billy Girls🚀</h2>
+                <p class="text-indigo-100 text-sm font-medium leading-relaxed italic">Matt, MAB, Soso, Vince, Sami : L'appli pour booster tes crousty révisions.</p>
+                <button id="btn-timer-open-main" class="mt-6 bg-white/20 hover:bg-white/30 p-4 rounded-2xl flex items-center gap-3 transition-all active:scale-95 w-full text-left text-white font-bold">
+                    <div class="bg-white text-indigo-600 p-2 rounded-xl"><i data-lucide="timer"></i></div>
+                    <div><div class="text-xs uppercase">Timer Focus</div><div class="text-[10px] opacity-90 uppercase tracking-tight">Mode Pomodoro</div></div>
+                </button>
+            </div>
+
+            <div class="bg-card rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-5">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-[10px] font-black uppercase text-indigo-600 dark:text-indigo-400 tracking-widest font-bold">Chooser fait maison (Groupes)</h3>
+                    <input type="number" id="chooser-count" value="2" min="1" max="5" class="w-12 text-center text-sm font-black rounded-lg py-1 border dark:bg-slate-900 outline-none">
+                </div>
+                <div id="chooser-result" class="min-h-[70px] flex flex-wrap justify-center gap-2 items-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-dashed border-indigo-200">
+                    <p class="text-[10px] font-bold text-slate-400 italic uppercase">tirage au soooort</p>
+                </div>
+                <button id="btn-chooser-run" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg active:scale-95 transition-all uppercase">Générer le groupe</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 font-bold uppercase text-xs">
+                <button id="quick-planning" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all btn-home-fix">
+                    <div class="w-12 h-8 flex items-center justify-center mx-auto text-amber-500"><i data-lucide="calendar"></i></div>
+                    <span>Révisions</span>
+                </button>
+                <button id="quick-grades" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all btn-home-fix">
+                    <div class="w-12 h-8 flex items-center justify-center mx-auto text-blue-500"><i data-lucide="calculator"></i></div>
+                    <span>Moyennes</span>
+                </button>
+                
+                <a href="https://edt.uvsq.fr/cal?vt=agendaWeek&dt=2026-02-05&et=group&fid0=MYISA2_23" target="_blank" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all flex flex-col items-center justify-center relative z-40 pointer-events-auto btn-home-fix">
+                    <div class="w-12 h-8 flex items-center justify-center text-indigo-600 mb-1"><i data-lucide="clock"></i></div>
+                    <span class="text-indigo-700 dark:text-indigo-400">Emploi du temps</span>
+                </a>
+
+                <button id="btn-food-open-main" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all flex flex-col items-center justify-center btn-home-fix">
+                    <div class="w-12 h-8 flex items-center justify-center text-orange-500 mb-1"><i data-lucide="utensils"></i></div>
+                    <span class="text-orange-600 dark:text-orange-400">On mange où ?</span>
+                </button>
+
+                <a href="https://affluences.com/sites/bu-st-quentin/reservation?type=575" target="_blank" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center col-span-2 flex flex-col items-center justify-center active:scale-95 transition-all btn-home-fix">
+                    <div class="w-12 h-8 flex items-center justify-center text-emerald-500 mb-1"><i data-lucide="map-pin"></i></div>
+                    <span class="text-emerald-700 dark:text-emerald-400 uppercase font-bold">Réserver Salle (BU St-Quentin)</span>
+                </a>
+            </div>
+        </div>
+
+        <div id="view-planning" class="view-content hidden space-y-4">
+            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-3">
+                <h3 class="text-xs font-black text-indigo-600 uppercase tracking-widest font-bold">Nouvelle Session</h3>
+                <input type="text" id="in-title" placeholder="Matière" class="w-full p-4 rounded-2xl text-sm border-none">
+                <div class="flex gap-2">
+                    <input type="date" id="in-date" class="flex-1 p-4 rounded-2xl text-sm border-none">
+                    <input type="time" id="in-time" class="w-24 p-4 rounded-2xl text-sm border-none">
+                </div>
+                <button id="btn-submit-session" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 uppercase">AJOUTER</button>
+            </div>
+            <div id="list-planning" class="space-y-4"></div>
+        </div>
+
+        <div id="view-docs" class="view-content hidden space-y-4">
+            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-3">
+                <h3 class="text-xs font-black text-indigo-600 uppercase text-center font-bold uppercase">Nouveau Cours</h3>
+                <input type="text" id="in-doc" placeholder="Nom du cours" class="w-full p-4 border dark:bg-slate-900 border-none">
+                <input type="text" id="in-url" placeholder="Lien Drive" class="w-full p-4 border dark:bg-slate-900 border-none">
+                <button id="btn-submit-link" class="w-full bg-indigo-900 text-white p-4 rounded-xl font-bold text-sm shadow-lg uppercase">Partager</button>
+            </div>
+            <div id="list-docs" class="space-y-4"></div>
+        </div>
+
+        <div id="view-projets" class="view-content hidden space-y-4">
+            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-4">
+                <h3 class="text-xs font-black text-emerald-600 uppercase text-center font-bold tracking-widest">Nouveau Ticket</h3>
+                <input type="text" id="in-proj-name" placeholder="Nom du projet" class="w-full p-4 rounded-2xl border-none">
+                <div class="space-y-2">
+                    <p class="text-[9px] font-black text-slate-400 uppercase px-1 font-bold">Assigner Team :</p>
+                    <div class="flex flex-wrap gap-2">
+                        <input type="checkbox" id="up-Matt" value="Matt" class="assign-check hidden"><label for="up-Matt" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Matt</label>
+                        <input type="checkbox" id="up-MAB" value="MAB" class="assign-check hidden"><label for="up-MAB" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">MAB</label>
+                        <input type="checkbox" id="up-Vince" value="Vince" class="assign-check hidden"><label for="up-Vince" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Vince</label>
+                        <input type="checkbox" id="up-Sami" value="Sami" class="assign-check hidden"><label for="up-Sami" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Sami</label>
+                        <input type="checkbox" id="up-Soso" value="Soso" class="assign-check hidden"><label for="up-Soso" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Soso</label>
+                    </div>
+                </div>
+                <button id="btn-submit-project" class="w-full bg-emerald-600 text-white p-4 rounded-xl font-bold text-sm shadow-lg uppercase">Créer Ticket</button>
+            </div>
+            <div id="list-projets" class="grid gap-3 font-bold"></div>
+        </div>
+
+        <div id="view-grades" class="view-content hidden space-y-6">
+            <div class="bg-card p-5 rounded-3xl border shadow-sm flex items-center justify-between">
+                <div class="flex items-center gap-3 w-full">
+                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-black text-xs" id="user-avatar">?</div>
+                    <select id="grade-user-select" class="flex-1 font-bold text-sm bg-transparent border-none outline-none appearance-none text-indigo-600 cursor-pointer">
+                        <option value="">Qui es-tu ?</option>
+                        <option value="Matthieu">Matthieu</option>
+                        <option value="Antoine">Antoine</option>
+                        <option value="Vincent">Vincent</option>
+                        <option value="Samia">Samia</option>
+                        <option value="Sofian">Sofian</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="grade-dashboard" class="hidden space-y-6">
+                <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-xl space-y-8 relative overflow-hidden">
+                    <div class="flex justify-between items-center relative z-10">
+                        <div class="flex-1">
+                            <h2 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Score Annuel</h2>
+                            <div id="total-gpa" class="text-6xl font-black">--</div>
+                            <div id="total-status" class="mt-3 inline-block px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-300">Calcul...</div>
+                        </div>
+                        <div class="w-32 h-24 flex items-end gap-1.5 px-2 border-l border-white/5" id="bloc-bar-chart"></div>
+                    </div>
+                    <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden relative z-10">
+                        <div id="year-progress-bar" class="h-full bg-indigo-500 transition-all duration-1000 shadow-[0_0_12px_rgba(99,102,241,0.5)]"></div>
+                    </div>
+                    <div class="flex justify-between text-[8px] font-black uppercase text-slate-500 tracking-widest relative z-10">
+                        <span>Validation (60 ECTS)</span>
+                        <span id="year-progress-text">0%</span>
+                    </div>
+                </div>
+                <div id="list-blocs-template" class="space-y-6"></div>
+            </div>
+            <div id="grade-empty" class="py-20 text-center text-slate-400 uppercase text-[10px] tracking-widest font-black italic">Choisis ton profil Billy</div>
+        </div>
+
+        <div id="view-notes" class="view-content hidden space-y-4">
+            <button id="btn-new-note" class="w-full p-8 bg-card border-2 border-dashed border-indigo-200 rounded-[2.5rem] text-indigo-600 font-extrabold flex items-center justify-center gap-2 active:bg-indigo-50 shadow-sm transition-all text-sm uppercase">
+                <i data-lucide="plus-circle"></i> NOUVELLE FICHE
+            </button>
+            <div id="list-notes" class="grid gap-3"></div>
+        </div>
+
+        <div id="view-food" class="view-content hidden space-y-6">
+            <div class="bg-card p-6 rounded-[2.5rem] border shadow-sm space-y-6">
+                <h3 class="text-xs font-black text-orange-600 uppercase tracking-widest text-center font-bold">1. QUI EST LÀ ?</h3>
+                <div class="flex flex-wrap justify-center gap-2">
+                    <input type="checkbox" id="fd-Matt" value="Matt" checked class="food-check hidden"><label for="fd-Matt" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Matt</label>
+                    <input type="checkbox" id="fd-MAB" value="MAB" checked class="food-check hidden"><label for="fd-MAB" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">MAB</label>
+                    <input type="checkbox" id="fd-Vince" value="Vince" checked class="food-check hidden"><label for="fd-Vince" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Vince</label>
+                    <input type="checkbox" id="fd-Sami" value="Sami" checked class="food-check hidden"><label for="fd-Sami" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Sami</label>
+                    <input type="checkbox" id="fd-Soso" value="Soso" checked class="food-check hidden"><label for="fd-Soso" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Soso</label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-card p-4 rounded-[2rem] border shadow-sm space-y-3">
+                    <h3 class="text-[10px] font-black uppercase text-indigo-600 text-center">Option 1 : On choisit</h3>
+                    <select id="food-resto-select" class="w-full text-xs font-bold p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 outline-none">
+                        </select>
+                    <button id="btn-food-manual" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-black text-[10px] uppercase active:scale-95 transition-all">Générer Menus</button>
+                </div>
+                <div class="bg-card p-4 rounded-[2rem] border shadow-sm space-y-3 flex flex-col justify-between">
+                    <h3 class="text-[10px] font-black uppercase text-rose-500 text-center">Option 2 : Hasard</h3>
+                    <div class="text-[9px] text-center text-slate-400 font-bold italic">L'appli choisit le resto ET les menus</div>
+                    <button id="btn-food-full-random" class="w-full bg-rose-500 text-white py-3 rounded-xl font-black text-[10px] uppercase active:scale-95 transition-all">Roulette Russe</button>
+                </div>
+            </div>
+
+            <div id="food-result-area" class="hidden space-y-4">
+                <div class="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-xl text-center relative overflow-hidden">
+                    <div class="relative z-10">
+                        <div class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Restaurant Choisi</div>
+                        <div id="food-result-resto" class="text-2xl font-black text-orange-400 uppercase italic">--</div>
+                    </div>
+                    <i data-lucide="utensils" class="w-24 h-24 text-white/5 absolute -right-4 -bottom-4 rotate-12"></i>
+                </div>
+                <div id="food-result-list" class="grid gap-2"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="timer-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-6 text-center">
+        <div class="bg-card w-full max-w-xs rounded-[3rem] p-8 space-y-6 shadow-2xl relative border border-slate-100 dark:border-slate-800">
+            <h3 class="text-sm font-black uppercase text-indigo-600 font-bold">Focus Mode ⏱️</h3>
+            
+            <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
+                <div class="absolute inset-0 rounded-full border-[6px] border-slate-100 dark:border-slate-800"></div>
+                <svg class="absolute inset-0 w-full h-full transform -rotate-90 timer-circle-svg" viewBox="0 0 100 100">
+                    <circle id="timer-circle" cx="50" cy="50" r="46" fill="none" stroke="#4f46e5" stroke-width="6" stroke-dasharray="289" stroke-dashoffset="0" stroke-linecap="round"></circle>
+                </svg>
+                <div id="timer-display" class="text-5xl font-black text-main tracking-tighter relative z-10">25:00</div>
+            </div>
+
+            <div class="flex justify-center gap-2">
+                <button id="btn-timer-25" class="px-3 py-2 bg-indigo-50 dark:bg-slate-800 rounded-xl text-xs font-bold text-indigo-600 active:scale-95 transition-all">25m</button>
+                <button id="btn-timer-5" class="px-3 py-2 bg-emerald-50 dark:bg-slate-800 rounded-xl text-xs font-bold text-emerald-600 active:scale-95 transition-all">5m</button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button id="btn-timer-toggle" class="bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all">START</button>
+                <button id="btn-timer-reset" class="bg-slate-200 dark:bg-slate-800 text-slate-500 p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all">RESET</button>
+            </div>
+
+            <button id="btn-timer-close" class="w-full text-[10px] font-black text-slate-400 uppercase pt-2 active:scale-90">Fermer & Continuer</button>
+        </div>
+    </div>
+
+    <div id="editor-modal" class="hidden fixed inset-0 bg-card z-[200] flex flex-col pt-[env(safe-area-inset-top)]">
+        <div class="p-4 border-b flex justify-between items-center bg-card">
+            <button id="btn-note-close" class="text-[10px] font-black text-slate-400 uppercase p-2">Fermer</button>
+            <div class="flex items-center gap-2">
+                <button id="btn-add-img" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 active:scale-90 flex items-center justify-center"><i data-lucide="image" class="w-4 h-4"></i></button>
+                <div class="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl shadow-inner">
+                    <button id="tab-edit" class="px-4 py-1.5 text-[9px] font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 shadow-sm font-bold uppercase tracking-tighter transition-all">ÉDITER</button>
+                    <button id="tab-view" class="px-4 py-1.5 text-[9px] font-bold rounded-lg text-slate-500 font-bold uppercase tracking-tighter transition-all">VOIR</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-4 py-2 border-b bg-slate-50 dark:bg-slate-900 flex gap-2 overflow-x-auto no-scrollbar">
+            <button class="nt-toolbar-btn font-bold" onmousedown="event.preventDefault()" onclick="fmt('**','**')">Gras</button>
+            <button class="nt-toolbar-btn italic" onmousedown="event.preventDefault()" onclick="fmt('*','*')">Italic</button>
+            <button class="nt-toolbar-btn underline" onmousedown="event.preventDefault()" onclick="fmt('<u>','</u>')">Souligné</button>
+            <button class="nt-toolbar-btn" onmousedown="event.preventDefault()" onclick="fmt('$$ ',' $$')">LaTeX</button>
+        </div>
+
+        <input type="text" id="nt-title" placeholder="Titre..." class="p-6 text-xl font-bold border-none outline-none bg-card">
+        <textarea id="nt-body" class="flex-1 p-6 text-base outline-none resize-none bg-card" placeholder="LaTeX fonctionne ! Essayez $$ \mu = 0 $$ ou $x^2$ ..."></textarea>
+        <div id="nt-preview" class="hidden flex-1 p-6 overflow-y-auto prose dark:prose-invert max-w-none"></div>
+        <input type="file" id="note-img-input" accept="image/*" class="hidden">
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, doc, addDoc, onSnapshot, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        // FIREBASE CONFIG
+        const firebaseConfig = { apiKey: "AIzaSyBIHjJKZj_Bqw1XjHfJo4X3GWrA6GNLU8I", authDomain: "bu-buddy-4bafe.firebaseapp.com", projectId: "bu-buddy-4bafe", storageBucket: "bu-buddy-4bafe.firebasestorage.app", messagingSenderId: "1083707246516", appId: "1:1083707246516:web:c6c78c199c7eb9323554e1" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const appId = 'bu-buddy-v-crousty'; 
+
+        const TEAM = ["Matt", "MAB", "Vince", "Sami", "Soso"];
+        const FULL_NAMES = ["Matthieu", "Antoine", "Vincent", "Samia", "Sofian"];
+        
+        // DATA BOUFFE
+        const MENU_DATA = { 
+            "Crousty Game": { plats: ["Bourguir", "L'Original", "Le Spicy", "Le Frenchy", "Le Gratiné Raclette", "Tenders x5"] }, 
+            "Maacburger": { plats: ["Menu Tower", "Extreme Tower", "Mac Poutine Poulet", "Wrap Chevre", "Big Mac"] },
+            "O'Tacos": { plats: ["Tacos M Cordon Bleu", "Tacos L Viande Hachée", "Tacos XL Nuggets", "Bowl Tenders"] },
+            "Boulangerie": { plats: ["Sandwich Poulet", "Panini 3 Fromages", "Formule Pizza", "Juste un croissant (rat)"] },
+            "Grec du coin": { plats: ["Kebab Frites", "Assiette Grecque", "Panini Kebab", "Tacos 2 viandes"] }
+        };
+
+        const PROGRAM = [
+            { id: "B1", short: "Savoirs", bloc: "BC00004225 (Savoirs)", items: [{ name: "Statistique bayésienne", ects: 3 }, { name: "Statistique non paramétrique", ects: 5 }, { name: "Projet Master", ects: 3 }, { name: "Anglais", ects: 3 }, { name: "Techniques de prévision", ects: 4 }] },
+            { id: "B2", short: "Actuariat", bloc: "BC00004226 (Actuariat)", items: [{ name: "Assurance vie", ects: 5 }, { name: "Assurance non vie", ects: 5 }, { name: "Analyse des risques", ects: 3 }] },
+            { id: "B3", short: "Marché", bloc: "BC00004227 (Marché)", items: [{ name: "Méthodes de régression avancées", ects: 4 }, { name: "Apprentissage non supervisé", ects: 4 }, { name: "Applications marketing", ects: 3 }, { name: "Machine learning et incertitude", ects: 3 }] },
+            { id: "B4", short: "Entrep.", bloc: "BC00004228 (Alternance)", items: [{ name: "Alternance", ects: 15 }] }
+        ];
+
+        let currentGradeUser = ""; let userNotes = {};
+        function debounce(f, w) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), w); }; }
+
+        // NAVIGATION (Z-INDEX CLEAN)
+        const setView = (id, btn) => {
+            document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
+            const target = document.getElementById('view-' + id);
+            if(target) target.classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active', 'text-indigo-600'));
+            if(btn) btn.classList.add('tab-active', 'text-indigo-600');
+            lucide.createIcons();
+            window.scrollTo(0,0);
+        };
+
+        const initSync = async () => {
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, (user) => {
+                if (!user) return;
+                document.getElementById('status-dot').className = "w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse";
+                document.getElementById('status-text').innerText = "patience les apagnans...";
+                const getCol = (name) => collection(db, 'artifacts', appId, 'public', 'data', name);
+
+                // SYNC CC DATE
+                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'exams'), (d) => {
+                    if (d.exists()) {
+                        let diff = new Date(d.data().date) - new Date();
+                        document.getElementById('countdown-days').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+                    }
+                });
+
+                // SYNC PLANNING
+                onSnapshot(getCol('planning'), s => {
+                    const list = document.getElementById('list-planning'); list.innerHTML = "";
+                    s.docs.forEach(d => {
+                        const ev = d.data(); const dt = new Date(ev.date);
+                        const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border shadow-sm space-y-4";
+                        div.innerHTML = `<div class="flex justify-between items-start"><div class="flex gap-4 items-center"><div class="date-square"><span>${dt.toLocaleDateString('fr-FR',{month:'short'}).toUpperCase()}</span><span class="text-lg">${dt.getDate()}</span></div><div><div class="font-black text-sm uppercase text-indigo-600">${ev.subject}</div><div class="text-[9px] opacity-40 font-bold">${ev.time||'--'}</div></div></div><button class="btn-del p-2 text-slate-300 hover:text-rose-500"><i data-lucide="x"></i></button></div><div class="flex">${TEAM.map(n => `<button class="w-8 h-8 rounded-full text-[7px] font-black -ml-2 first:ml-0 border-2 border-white dark:border-slate-900 ${(ev.participants||[]).includes(n)?'bg-indigo-600 text-white':'bg-slate-100 dark:bg-slate-800 text-slate-400'}" id="p-${d.id}-${n}">${n}</button>`).join('')}</div>`;
+                        list.appendChild(div);
+                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','planning',d.id));
+                        TEAM.forEach(n => { const b = document.getElementById(`p-${d.id}-${n}`); if(b) b.onclick = () => { const ref = doc(db,'artifacts',appId,'public','data','planning',d.id); if((ev.participants||[]).includes(n)) updateDoc(ref,{participants:arrayRemove(n)}); else updateDoc(ref,{participants:arrayUnion(n)}); }; });
+                    }); lucide.createIcons();
+                });
+
+                // SYNC DOCS
+                onSnapshot(getCol('docs'), s => {
+                    const list = document.getElementById('list-docs'); list.innerHTML = "";
+                    s.docs.forEach(d => {
+                        const i = d.data(); const div = document.createElement('div'); div.className = "bg-card p-4 rounded-2xl border flex justify-between items-center shadow-sm font-bold";
+                        div.innerHTML = `<div class="font-bold text-xs uppercase">${i.name}</div><div class="flex gap-2"><a href="${i.url}" target="_blank" class="text-indigo-600 text-[9px] font-black underline uppercase">Drive</a><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
+                        list.appendChild(div);
+                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','docs',d.id));
+                    }); lucide.createIcons();
+                });
+
+                // SYNC PROJECTS
+                onSnapshot(getCol('projects'), s => {
+                    const list = document.getElementById('list-projets'); list.innerHTML = "";
+                    s.docs.forEach(d => {
+                        const p = d.data(); const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border shadow-sm space-y-3 font-bold";
+                        div.innerHTML = `<div class="flex justify-between items-center font-black uppercase text-sm font-bold"><span>${p.name}</span><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="x"></i></button></div><div class="flex flex-wrap gap-1">${(p.assignees||[]).map(n=>`<div class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[7px] font-black uppercase text-slate-400">${n}</div>`).join('')}</div><button class="btn-status px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full text-[8px] font-black uppercase">${p.status||'À FAIRE'}</button>`;
+                        list.appendChild(div);
+                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','projects',d.id));
+                        div.querySelector('.btn-status').onclick = () => { const nxt = p.status==='À FAIRE'?'EN COURS':(p.status==='EN COURS'?'TERMINÉ':'À FAIRE'); updateDoc(doc(db,'artifacts',appId,'public','data','projects',d.id), {status:nxt}); };
+                    }); lucide.createIcons();
+                });
+
+                // SYNC NOTES
+                onSnapshot(getCol('notes'), s => {
+                    const list = document.getElementById('list-notes'); list.innerHTML = "";
+                    s.docs.forEach(d => {
+                        const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border flex justify-between items-center shadow-sm cursor-pointer font-bold active:scale-95 transition-all";
+                        div.innerHTML = `<div class="font-bold text-sm uppercase">${d.data().title || "Note sans titre"}</div><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
+                        div.onclick = (e) => { if(!e.target.closest('button')) openNote(d.id); };
+                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','notes',d.id));
+                        list.appendChild(div);
+                    }); lucide.createIcons();
+                });
+
+                // SYNC MOYENNES (VITAL)
+                onSnapshot(getCol('user_grades'), s => {
+                    userNotes = {}; s.docs.forEach(d => { if(d.data().user === currentGradeUser) userNotes[d.data().subject] = { id: d.id, note: d.data().note }; });
+                    if(currentGradeUser) renderGradesUI();
+                });
+            });
+        };
+
+        const renderGradesUI = () => {
+            const container = document.getElementById('list-blocs-template'); container.innerHTML = "";
+            const chart = document.getElementById('bloc-bar-chart'); chart.innerHTML = "";
+            let gWeight = 0, gEcts = 0;
+            PROGRAM.forEach(bloc => {
+                let bWeight = 0, bEcts = 0;
+                let html = bloc.items.map(item => {
+                    const saved = userNotes[item.name]; const val = saved ? saved.note : "";
+                    if(saved) { bWeight += (saved.note * item.ects); bEcts += item.ects; gWeight += (saved.note * item.ects); gEcts += item.ects; }
+                    return `<div class="flex justify-between items-center py-2 border-b last:border-none font-bold"><div class="text-[10px] font-bold uppercase text-slate-500">${item.name}</div><input type="text" id="inp-${item.name.replace(/\s/g, '-')}" value="${val}" class="grade-input w-12 p-1.5 rounded-lg text-center text-xs font-black outline-none border-none shadow-sm"></div>`;
+                }).join('');
+                const avg = bEcts > 0 ? (bWeight / bEcts) : 0;
+                const h = (avg / 20) * 100;
+                chart.innerHTML += `<div class="bar-wrapper"><div class="bar-bg"><div class="bar-fill ${avg>=10?'bg-indigo-500':'bg-rose-500'}" style="height: ${h}%"></div></div></div>`;
+                const div = document.createElement('div'); div.className = "bg-card rounded-3xl border p-6 shadow-sm";
+                div.innerHTML = `<div class="flex justify-between mb-4 font-bold"><h3 class="text-[9px] font-black uppercase opacity-60 max-w-[70%] text-slate-400">${bloc.short}</h3><div class="text-lg font-black ${avg>=10?'text-indigo-600':'text-rose-500'}">${avg?avg.toFixed(2):"--"}</div></div><div class="space-y-1">${html}</div>`;
+                container.appendChild(div);
+                bloc.items.forEach(item => {
+                    const el = document.getElementById(`inp-${item.name.replace(/\s/g, '-')}`);
+                    if(el) el.onchange = async (e) => {
+                        const note = parseFloat(e.target.value.replace(',', '.')); const ex = userNotes[item.name];
+                        if(e.target.value==="") { if(ex) await deleteDoc(doc(db,'artifacts',appId,'public','data','user_grades',ex.id)); }
+                        else if(!isNaN(note)) { if(ex) await updateDoc(doc(db,'artifacts',appId,'public','data','user_grades',ex.id), {note}); else await addDoc(collection(db,'artifacts',appId,'public','data','user_grades'), {user:currentGradeUser, subject:item.name, note}); }
+                    };
+                });
+            });
+            const final = gEcts > 0 ? (gWeight / gEcts) : 0;
+            document.getElementById('total-gpa').innerText = final.toFixed(2);
+            document.getElementById('year-progress-bar').style.width = ((gEcts / 60) * 100) + "%";
+            document.getElementById('year-progress-text').innerText = Math.round((gEcts / 60) * 100) + "%";
+            const stat = document.getElementById('total-status');
+            if(final >= 10) { stat.innerText = "Ti es un tigre"; stat.className = "mt-3 inline-block px-3 py-1 bg-green-500/20 text-green-500 rounded-full text-[9px] font-black uppercase tracking-widest"; }
+            else { stat.innerText = "Allez courage go dead les rattrapages"; stat.className = "mt-3 inline-block px-3 py-1 bg-rose-500/20 text-rose-500 rounded-full text-[9px] font-black uppercase tracking-widest"; }
+        };
+
+        // DROPDOWN CHANGE
+        document.getElementById('grade-user-select').onchange = (e) => {
+            currentGradeUser = e.target.value;
+            if(currentGradeUser) {
+                document.getElementById('grade-dashboard').classList.remove('hidden');
+                document.getElementById('grade-empty').classList.add('hidden');
+                document.getElementById('user-avatar').innerText = currentGradeUser.charAt(0);
+                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_grades'), s => {
+                    userNotes = {}; s.docs.forEach(d => { if(d.data().user === currentGradeUser) userNotes[d.data().subject] = { id: d.id, note: d.data().note }; });
+                    renderGradesUI();
+                });
+            }
+        };
+
+        // BUTTONS NAVIGATION
+        document.getElementById('nav-home').onclick = (e) => setView('home', e.currentTarget);
+        document.getElementById('nav-planning').onclick = (e) => setView('planning', e.currentTarget);
+        document.getElementById('nav-docs').onclick = (e) => setView('docs', e.currentTarget);
+        document.getElementById('nav-projets').onclick = (e) => setView('projets', e.currentTarget);
+        document.getElementById('nav-notes').onclick = (e) => setView('notes', e.currentTarget);
+        document.getElementById('nav-grades').onclick = (e) => setView('grades', e.currentTarget);
+        document.getElementById('nav-food').onclick = (e) => setView('food', e.currentTarget);
+        
+        document.getElementById('quick-planning').onclick = () => setView('planning', document.getElementById('nav-planning'));
+        document.getElementById('quick-grades').onclick = () => setView('grades', document.getElementById('nav-grades'));
+        document.getElementById('logo-main-btn').onclick = () => setView('home', document.getElementById('nav-home'));
+
+        // Redirection Bouton Accueil vers Nouvel Onglet Bouffe
+        document.getElementById('btn-food-open-main').onclick = () => setView('food', document.getElementById('nav-food'));
+
+        document.getElementById('btn-chooser-run').onclick = () => {
+            const count = parseInt(document.getElementById('chooser-count').value) || 2;
+            const shuffled = [...TEAM].sort(() => 0.5 - Math.random()).slice(0, count);
+            document.getElementById('chooser-result').innerHTML = shuffled.map(n => `<span class="px-3 py-1 bg-indigo-600 text-white rounded-full font-black text-[10px] uppercase shadow-sm">${n}</span>`).join(' ');
+        };
+
+        // --- TIMER LOGIC ---
+        let timerInterval;
+        let timeLeft = 25 * 60;
+        let totalTime = 25 * 60;
+        let isTimerRunning = false;
+
+        const updateTimerDisplay = () => {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer-display').innerText = `${m}:${s}`;
+            const circle = document.getElementById('timer-circle');
+            const offset = 289 - (timeLeft / totalTime) * 289;
+            circle.style.strokeDashoffset = offset;
+        };
+
+        const toggleTimer = () => {
+            const btn = document.getElementById('btn-timer-toggle');
+            if (isTimerRunning) {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                btn.innerText = "REPRENDRE";
+                btn.classList.replace('bg-rose-500', 'bg-indigo-600');
+            } else {
+                isTimerRunning = true;
+                btn.innerText = "PAUSE";
+                btn.classList.replace('bg-indigo-600', 'bg-rose-500');
+                timerInterval = setInterval(() => {
+                    if (timeLeft > 0) {
+                        timeLeft--;
+                        updateTimerDisplay();
+                    } else {
+                        clearInterval(timerInterval);
+                        isTimerRunning = false;
+                        btn.innerText = "FINI !";
+                    }
+                }, 1000);
+            }
+        };
+
+        const setTimer = (min) => {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+            totalTime = min * 60;
+            timeLeft = totalTime;
+            updateTimerDisplay();
+            const btn = document.getElementById('btn-timer-toggle');
+            btn.innerText = "START";
+            btn.className = "bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all";
+        };
+
+        document.getElementById('btn-timer-open-main').onclick = () => document.getElementById('timer-modal').classList.remove('hidden');
+        document.getElementById('btn-timer-close').onclick = () => document.getElementById('timer-modal').classList.add('hidden');
+        document.getElementById('btn-timer-toggle').onclick = toggleTimer;
+        document.getElementById('btn-timer-reset').onclick = () => setTimer(Math.floor(totalTime / 60));
+        document.getElementById('btn-timer-25').onclick = () => setTimer(25);
+        document.getElementById('btn-timer-5').onclick = () => setTimer(5);
+
+        // --- FOOD LOGIC (NOUVELLE) ---
+        // 1. Remplir le select des restos
+        const restoSelect = document.getElementById('food-resto-select');
+        Object.keys(MENU_DATA).forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r; opt.innerText = r;
+            restoSelect.appendChild(opt);
+        });
+
+        const getPresentUsers = () => {
+            return Array.from(document.querySelectorAll('.food-check:checked')).map(cb => cb.value);
+        };
+
+        const generateFood = (restoName) => {
+            const users = getPresentUsers();
+            if(users.length === 0) return alert("Sélectionne au moins un Billy !");
+            
+            const resultList = document.getElementById('food-result-list');
+            const resultArea = document.getElementById('food-result-area');
+            const resultResto = document.getElementById('food-result-resto');
+
+            resultResto.innerText = restoName;
+            resultList.innerHTML = "";
+
+            users.forEach(u => {
+                const plats = MENU_DATA[restoName].plats;
+                const randomPlat = plats[Math.floor(Math.random() * plats.length)];
+                
+                const div = document.createElement('div');
+                div.className = "bg-card p-4 rounded-2xl border flex justify-between items-center shadow-sm";
+                div.innerHTML = `<span class="font-black text-xs uppercase text-slate-400">${u}</span><span class="font-bold text-sm text-indigo-600 text-right">${randomPlat}</span>`;
+                resultList.appendChild(div);
+            });
+            
+            resultArea.classList.remove('hidden');
+            resultArea.scrollIntoView({ behavior: 'smooth' });
+        };
+
+        document.getElementById('btn-food-manual').onclick = () => {
+            generateFood(document.getElementById('food-resto-select').value);
+        };
+
+        document.getElementById('btn-food-full-random').onclick = () => {
+            const restos = Object.keys(MENU_DATA);
+            const randomResto = restos[Math.floor(Math.random() * restos.length)];
+            generateFood(randomResto);
+        };
+
+        // SUBMITS
+        document.getElementById('btn-submit-session').onclick = () => {
+            const s = document.getElementById('in-title').value; const d = document.getElementById('in-date').value; const t = document.getElementById('in-time').value;
+            if(s && d) addDoc(collection(db,'artifacts',appId,'public','data','planning'), { subject: s, date: d, time: t, participants: [] });
+            document.getElementById('in-title').value = "";
+        };
+        document.getElementById('btn-submit-link').onclick = () => {
+            const n = document.getElementById('in-doc').value; const u = document.getElementById('in-url').value;
+            if(n && u) addDoc(collection(db,'artifacts',appId,'public','data','docs'), { name: n, url: u });
+            document.getElementById('in-doc').value = ""; document.getElementById('in-url').value = "";
+        };
+        document.getElementById('btn-submit-project').onclick = () => {
+            const n = document.getElementById('in-proj-name').value;
+            const ass = Array.from(document.querySelectorAll('.assign-check:checked')).map(i => i.value);
+            if(n) addDoc(collection(db,'artifacts',appId,'public','data','projects'), { name: n, status: 'À FAIRE', assignees: ass });
+            document.getElementById('in-proj-name').value = ""; document.querySelectorAll('.assign-check').forEach(c => c.checked = false);
+        };
+
+        // NOTES (ROBUST KATEX + TAB SWITCHING FIX)
+        let currentNoteId = null;
+        marked.setOptions({ breaks: true, gfm: true });
+        
+        const saveDeb = debounce((id, data) => { updateDoc(doc(db,'artifacts',appId,'public','data','notes',id), data); }, 800);
+        
+        const openNote = (id) => {
+            currentNoteId = id; document.getElementById('editor-modal').classList.remove('hidden');
+            onSnapshot(doc(db,'artifacts',appId,'public','data','notes',id), d => { if(d.exists() && currentNoteId === id && document.activeElement !== document.getElementById('nt-body')) { document.getElementById('nt-title').value = d.data().title || ""; document.getElementById('nt-body').value = d.data().content || ""; } });
+        };
+        
+        const toggleTab = (mode) => {
+            const editBtn = document.getElementById('tab-edit');
+            const viewBtn = document.getElementById('tab-view');
+            
+            const activeClasses = ['bg-white', 'dark:bg-slate-700', 'text-indigo-600', 'shadow-sm'];
+            const inactiveClasses = ['text-slate-500'];
+
+            if(mode === 'view') {
+                document.getElementById('nt-body').classList.add('hidden');
+                document.getElementById('nt-preview').classList.remove('hidden');
+                
+                editBtn.classList.remove(...activeClasses);
+                editBtn.classList.add(...inactiveClasses);
+                viewBtn.classList.remove(...inactiveClasses);
+                viewBtn.classList.add(...activeClasses);
+
+                let raw = document.getElementById('nt-body').value;
+                const protectedRaw = raw.replace(/(\$\$[\s\S]*?\$\$)|(\$[^\$\n]*?\$)/g, (match) => { return match.replace(/_/g, '\\_'); });
+                document.getElementById('nt-preview').innerHTML = marked.parse(protectedRaw);
+                renderMathInElement(document.getElementById('nt-preview'), {
+                    delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
+                    throwOnError: false
+                });
+
+            } else {
+                document.getElementById('nt-body').classList.remove('hidden');
+                document.getElementById('nt-preview').classList.add('hidden');
+
+                viewBtn.classList.remove(...activeClasses);
+                viewBtn.classList.add(...inactiveClasses);
+                editBtn.classList.remove(...inactiveClasses);
+                editBtn.classList.add(...activeClasses);
+            }
+        };
+
+        document.getElementById('tab-view').onclick = () => toggleTab('view');
+        document.getElementById('tab-edit').onclick = () => toggleTab('edit');
+        
+        // --- FORMATTER (Focus Management) ---
+        window.fmt = (startTag, endTag = "") => {
+            const textarea = document.getElementById('nt-body');
+            const start = textarea.selectionStart;
+            const end = textarea.selectionEnd;
+            const text = textarea.value;
+            
+            const before = text.substring(0, start);
+            const selected = text.substring(start, end);
+            const after = text.substring(end);
+            textarea.value = before + startTag + selected + endTag + after;
+
+            saveDeb(currentNoteId, { content: textarea.value });
+            textarea.focus();
+            if (start === end) {
+                const newPos = start + startTag.length;
+                textarea.setSelectionRange(newPos, newPos);
+            } else {
+                textarea.setSelectionRange(start, end + startTag.length + endTag.length);
+            }
+        };
+
+        document.getElementById('nt-title').oninput = (e) => saveDeb(currentNoteId, { title: e.target.value });
+        document.getElementById('nt-body').oninput = (e) => saveDeb(currentNoteId, { content: e.target.value });
+        document.getElementById('btn-note-close').onclick = () => { currentNoteId = null; document.getElementById('editor-modal').classList.add('hidden'); };
+        document.getElementById('btn-add-img').onclick = () => document.getElementById('note-img-input').click();
+        document.getElementById('note-img-input').onchange = (e) => { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onloadend = () => { const b = document.getElementById('nt-body'); b.value += `\n\n![image](${r.result})\n\n`; saveDeb(currentNoteId, {content:b.value}); }; r.readAsDataURL(f); } };
+
+        window.onload = () => { initSync(); lucide.createIcons(); };
+        document.getElementById('theme-toggle').onclick = () => { document.body.classList.toggle('dark-mode'); lucide.createIcons(); };
+    </script>
+</body>
+</html>
