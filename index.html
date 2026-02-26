@@ -474,7 +474,7 @@
                 let noteViser = pointsManquants / ectsRestants;
                 if (noteViser <= 0) { tScore.innerText = "Validé !"; tScore.style.color = "#34C759"; tDesc.innerText = "Même avec des 0 partout, c'est validé."; } 
                 else if (noteViser > 20) { tScore.innerText = "Chaud..."; tScore.style.color = "#FF3B30"; tDesc.innerText = "Il faut mathématiquement plus de 20/20. Rattrapages inévitables."; } 
-                else { tScore.innerText = noteViser.toFixed(2); tScore.style.color = noteViser < 10 ? "#34C759" : noteViser > 14 ? "#FF9500" : "white"; tDesc.innerText = `Il reste ${ectsRestants} ECTS en jeu. Vise cette moyenne pour valider l'année.`; }
+                else { tScore.innerText = noteViser.toFixed(2); tScore.style.color = noteViser < 10 ? "#34C759" : noteViser > 14 ? "#FF9500" : "white"; tDesc.innerText = `Il reste ${ectsRestants} ECTS en jeu. Vise cette moyenne au S4 pour valider l'année.`; }
             }
             localStorage.setItem('ryan_grades_v8', JSON.stringify(grades));
         };
