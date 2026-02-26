@@ -2,771 +2,522 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BU-Buddy | Team Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ryan Study Hub</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="BU-Buddy">
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-title" content="Ryan App">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        
-        :root { 
-            --app-bg: #f8fafc; 
-            --card-bg: #ffffff; 
-            --text-main: #0f172a; 
-            --text-muted: #64748b; 
-            --border-color: #e2e8f0; 
-            --input-bg: #f1f5f9;
-        }
-        .dark-mode { 
-            --app-bg: #020617; 
-            --card-bg: #0f172a; 
-            --text-main: #f1f5f9; 
-            --text-muted: #94a3b8; 
-            --border-color: #1e293b;
-            --input-bg: #1e293b;
+        /* --- DESIGN SYSTEM iOS PREMIUM --- */
+        :root {
+            --bg-color: #F2F2F7; --card-bg: #FFFFFF; --primary: #007AFF; 
+            --success: #34C759; --danger: #FF3B30; --warning: #FF9500;
+            --text-main: #1C1C1E; --text-sec: #8E8E93; --divider: #E5E5EA;
+            --safe-bottom: env(safe-area-inset-bottom, 20px);
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            overscroll-behavior-y: contain;
-            background-color: var(--app-bg);
-            color: var(--text-main);
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        .bg-card { background-color: var(--card-bg); border-color: var(--border-color); border-width: 1px; }
-        .tab-active { color: #4f46e5 !important; border-bottom: 3px solid #4f46e5 !important; opacity: 1 !important; }
-        .view-content { animation: fadeIn 0.2s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .crousty-card { background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%); }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
-        input, select, textarea {
-            background-color: var(--input-bg) !important;
-            color: var(--text-main) !important;
-            border: 1px solid var(--border-color) !important;
-            outline: none;
-            border-radius: 12px;
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; overflow-x: hidden; }
 
-        .grade-input { font-weight: 900; text-align: center; border-radius: 8px; }
+        .header { padding: 50px 20px 20px 20px; background: var(--bg-color); position: sticky; top: 0; z-index: 10; }
+        .header h1 { margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { margin: 5px 0 0 0; color: var(--text-sec); font-size: 16px; font-weight: 500; }
+
+        .view { display: none; padding: 0 20px 120px 20px; animation: fadeIn 0.2s ease-in-out; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--card-bg); border-radius: 20px; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04); margin-bottom: 20px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-header h3 { margin: 0; font-size: 18px; font-weight: 700; }
+
+        .target-widget { background: var(--text-main); color: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); }
+        .target-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .target-header h4 { margin: 0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #A1A1A6; }
+        .target-content { display: flex; align-items: flex-end; gap: 10px; }
+        .target-score { font-size: 42px; font-weight: 800; line-height: 1; }
+        .target-desc { font-size: 13px; color: #D1D1D6; padding-bottom: 5px; flex: 1; }
+
+        .average-container { display: flex; justify-content: space-between; align-items: center; padding-bottom: 15px; border-bottom: 1px solid var(--divider); margin-bottom: 15px; }
+        .average-container:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .average-label { font-size: 15px; font-weight: 600; color: var(--text-main); }
+        .average-sub { color: var(--text-sec); font-size: 12px; margin-top: 2px; }
+        .average-score { font-size: 24px; font-weight: 800; color: var(--primary); }
+
+        .btn { background: var(--primary); color: white; border: none; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 600; width: 100%; cursor: pointer; margin-top: 10px; }
+        .btn-icon { background: rgba(0, 122, 255, 0.1); color: var(--primary); border-radius: 50%; width: 35px; height: 35px; border: none; font-size: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         
-        /* Checkbox stylées pour la bouffe */
-        .food-check:checked + label { background-color: #4f46e5; color: white; border-color: #4f46e5; transform: scale(0.95); }
-        .assign-check:checked + label { background-color: #4f46e5; color: white; border-color: #4f46e5; }
+        .segmented-control { display: flex; background: #E3E3E8; padding: 3px; border-radius: 9px; margin-bottom: 20px; }
+        .segment { flex: 1; text-align: center; padding: 8px 0; font-size: 14px; font-weight: 600; color: var(--text-main); border-radius: 7px; cursor: pointer; }
+        .segment.active { background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        /* Date format carré original */
-        .date-square {
-            background-color: #4f46e5;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            line-height: 1;
-            flex-shrink: 0;
-            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
-        }
+        .item-list { list-style: none; padding: 0; margin: 0; }
+        .item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid var(--divider); }
+        .item:last-child { border-bottom: none; }
+        .item-title { font-weight: 600; font-size: 16px; }
+        .tag-badge { background: rgba(0, 122, 255, 0.1); color: var(--primary); padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; margin-top: 4px; display: inline-block; }
+        .tag-badge.s3 { background: rgba(255, 149, 0, 0.1); color: var(--warning); }
+        .tag-badge.rat { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+        .date-badge { background: #F2F2F7; padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 600; }
 
-        /* Chart Vertical Bars */
-        .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 4px; }
-        .bar-bg { width: 100%; background: rgba(255,255,255,0.1); border-radius: 4px; height: 100%; position: relative; display: flex; align-items: flex-end; overflow: hidden; }
-        .bar-fill { width: 100%; background-color: #6366f1; transition: height 1s ease-out; }
+        .ue-title { font-size: 14px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin: 25px 0 10px 10px; letter-spacing: 0.5px; }
+        .folder-item { background: var(--card-bg); padding: 16px 20px; border-bottom: 1px solid var(--divider); display: flex; align-items: center; cursor: pointer; }
+        .folder-item:first-child { border-radius: 16px 16px 0 0; }
+        .folder-item:last-child { border-radius: 0 0 16px 16px; border-bottom: none; }
+        .folder-icon { color: #87C1FF; font-size: 24px; margin-right: 15px; }
 
-        /* Fix Images & Lignes Notes */
-        #nt-preview { white-space: pre-wrap; word-wrap: break-word; color: var(--text-main); line-height: 1.6; }
-        #nt-preview img { max-width: 100%; border-radius: 1rem; margin: 1.5rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 2px solid var(--border-color); }
+        .folder-view { position: fixed; top: 0; left: 0; right: 0; bottom: 0; transform: translateY(100%); background: var(--bg-color); z-index: 300; transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); display: flex; flex-direction: column; }
+        .folder-view.active { transform: translateY(0); }
+        .folder-header { padding: 50px 20px 15px 20px; background: var(--card-bg); display: flex; align-items: center; border-bottom: 1px solid var(--divider); }
+        .folder-header button { background: none; border: none; color: var(--primary); font-size: 16px; font-weight: 500; padding: 0; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .folder-header h2 { margin: 0; flex: 1; text-align: center; font-size: 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .folder-content { flex: 1; padding: 20px; overflow-y: auto; padding-bottom: 100px; }
         
-        /* Style LaTeX */
-        .katex { font-size: 1.1em; }
+        .content-card { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); position: relative; }
+        .content-card .del-btn { position: absolute; top: 10px; right: 10px; color: var(--text-sec); background: none; border: none; font-size: 14px; padding: 5px; cursor: pointer; }
+        .content-text { font-size: 15px; line-height: 1.4; white-space: pre-wrap; }
+        .content-link { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main); font-weight: 600; padding: 10px; background: var(--bg-color); border-radius: 10px; margin-top: 5px; }
+        .content-link i { color: var(--primary); font-size: 20px; }
+        .content-img { width: 100%; border-radius: 10px; margin-top: 5px; }
 
-        .nt-toolbar-btn { padding: 8px 12px; border-radius: 8px; background: rgba(0,0,0,0.05); font-weight: 900; font-size: 12px; }
+        .fab { position: absolute; bottom: 30px; right: 20px; width: 60px; height: 60px; border-radius: 30px; background: var(--primary); color: white; display: flex; justify-content: center; align-items: center; font-size: 24px; box-shadow: 0 8px 20px rgba(0, 122, 255, 0.4); border: none; cursor: pointer; z-index: 310; transition: transform 0.1s; }
+        .fab:active { transform: scale(0.9); }
+
+        .tab-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; justify-content: space-around; padding: 15px 10px calc(15px + var(--safe-bottom)) 10px; border-top: 0.5px solid rgba(0,0,0,0.1); z-index: 100; }
+        .tab-item { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--text-sec); font-size: 11px; font-weight: 500; cursor: pointer; }
+        .tab-item.active { color: var(--primary); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 400; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal { position: fixed; bottom: -100%; left: 0; right: 0; background: var(--bg-color); border-radius: 20px 20px 0 0; padding: 20px 20px calc(20px + var(--safe-bottom)) 20px; z-index: 401; transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); max-height: 90vh; overflow-y: auto; }
+        .modal.active { bottom: 0; }
+        .modal-handle { width: 40px; height: 5px; background: #C7C7CC; border-radius: 3px; margin: 0 auto 20px auto; }
         
-        /* Correction tactile boutons accueil */
-        .btn-home-fix { position: relative; z-index: 30; pointer-events: auto; }
-
-        /* Timer Circle Animation */
-        .timer-circle-svg circle { transition: stroke-dashoffset 1s linear; }
+        .input-box { background: white; border-radius: 12px; padding: 12px 15px; margin-bottom: 12px; display: flex; align-items: center; }
+        .input-box i { color: var(--text-sec); margin-right: 15px; width: 20px; text-align: center; }
+        .input-box input, .input-box select, .input-box textarea { border: none; outline: none; font-size: 16px; width: 100%; background: transparent; color: var(--text-main); font-family: inherit; }
+        optgroup { font-weight: bold; color: var(--text-sec); }
+        
+        .todo-item { display: flex; align-items: flex-start; gap: 15px; cursor: pointer; padding: 15px 0; border-bottom: 1px solid var(--divider); }
+        .todo-item:last-child { border-bottom: none; }
+        .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--divider); display: flex; align-items: center; justify-content: center; color: transparent; margin-top: 2px; flex-shrink: 0; }
+        .todo-item.done .checkbox { background: var(--primary); border-color: var(--primary); color: white; }
+        .todo-item.done .todo-text { text-decoration: line-through; color: var(--text-sec); }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body>
 
-    <header class="bg-card border-b sticky top-0 z-[100] pt-[env(safe-area-inset-top)] shadow-sm">
-        <div class="max-w-xl mx-auto px-5 py-4 flex justify-between items-center text-main">
-            <h1 class="text-lg font-extrabold tracking-tight flex items-center gap-2 cursor-pointer" id="logo-main-btn">
-                <span class="text-indigo-600 italic">BU</span>-BUDDY
-            </h1>
-            <div class="flex items-center gap-4">
-                <button id="theme-toggle" class="p-2 w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 transition-all active:scale-90 flex items-center justify-center">
-                    <i data-lucide="moon" id="theme-icon"></i>
-                </button>
-                <div id="status-chip" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full border border-slate-200 dark:border-slate-700">
-                    <div id="status-dot" class="w-1.5 h-1.5 bg-amber-400 rounded-full"></div>
-                    <span id="status-text" class="text-[8px] font-black uppercase tracking-tighter">patience les apagnans...</span>
-                </div>
+    <div class="header">
+        <h1>Ryan Hub</h1>
+        <p>L2 Éco-Gestion • UPEC</p>
+    </div>
+
+    <div id="view-dashboard" class="view active">
+        <div class="target-widget">
+            <div class="target-header">
+                <h4>🎯 Objectif Validation (10/20)</h4>
+                <i class="fa-solid fa-bullseye"></i>
             </div>
-        </div>
-    </header>
-
-    <nav class="bg-card border-b sticky top-[61px] z-[90] overflow-x-auto no-scrollbar font-bold uppercase text-[10px] tracking-widest">
-        <div class="max-w-xl mx-auto flex px-2 min-w-max">
-            <button id="nav-home" class="nav-btn px-5 py-4 tab-active">Accueil</button>
-            <button id="nav-planning" class="nav-btn px-5 py-4 text-slate-400">Révisions</button>
-            <button id="nav-docs" class="nav-btn px-5 py-4 text-slate-400">Cours</button>
-            <button id="nav-projets" class="nav-btn px-5 py-4 text-slate-400">Projets</button>
-            <button id="nav-notes" class="nav-btn px-5 py-4 text-slate-400">Notes</button>
-            <button id="nav-grades" class="nav-btn px-5 py-4 text-slate-400">Moyennes</button>
-            <button id="nav-food" class="nav-btn px-5 py-4 text-orange-500">Bouffe</button>
-        </div>
-    </nav>
-
-    <main class="flex-1 max-w-xl mx-auto w-full p-4 pb-32 relative z-10">
-        
-        <div id="view-home" class="view-content space-y-6">
-            <div id="countdown-banner" class="bg-slate-900 rounded-[2rem] p-6 text-white flex items-center justify-between overflow-hidden relative cursor-pointer active:scale-95 shadow-xl">
-                <div class="relative z-10 text-white">
-                    <p class="text-[10px] font-black uppercase text-indigo-400 tracking-widest mb-1 flex items-center gap-1.5">Prochain CC <i data-lucide="edit-3" class="inline w-3 h-3"></i></p>
-                    <div class="flex items-baseline gap-2">
-                        <span id="countdown-days" class="text-4xl font-black">--</span>
-                        <span class="text-xs font-bold text-slate-400 uppercase tracking-tight">jours restants</span>
-                    </div>
-                </div>
-                <i data-lucide="calendar-clock" class="w-16 h-16 text-indigo-500/20 absolute -right-2 rotate-12"></i>
-            </div>
-
-            <div class="crousty-card p-8 rounded-[2.5rem] text-white shadow-2xl">
-                <h2 class="text-2xl font-black mb-2 leading-tight uppercase italic text-white">Sabaidi les Billy Boys et les Billy Girls🚀</h2>
-                <p class="text-indigo-100 text-sm font-medium leading-relaxed italic">Matt, MAB, Soso, Vince, Sami : L'appli pour booster tes crousty révisions.</p>
-                <button id="btn-timer-open-main" class="mt-6 bg-white/20 hover:bg-white/30 p-4 rounded-2xl flex items-center gap-3 transition-all active:scale-95 w-full text-left text-white font-bold">
-                    <div class="bg-white text-indigo-600 p-2 rounded-xl"><i data-lucide="timer"></i></div>
-                    <div><div class="text-xs uppercase">Timer Focus</div><div class="text-[10px] opacity-90 uppercase tracking-tight">Mode Pomodoro</div></div>
-                </button>
-            </div>
-
-            <div class="bg-card rounded-[2rem] p-6 shadow-sm border border-slate-200 dark:border-slate-800 space-y-5">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-[10px] font-black uppercase text-indigo-600 dark:text-indigo-400 tracking-widest font-bold">Chooser fait maison (Groupes)</h3>
-                    <input type="number" id="chooser-count" value="2" min="1" max="5" class="w-12 text-center text-sm font-black rounded-lg py-1 border dark:bg-slate-900 outline-none">
-                </div>
-                <div id="chooser-result" class="min-h-[70px] flex flex-wrap justify-center gap-2 items-center bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-4 border border-dashed border-indigo-200">
-                    <p class="text-[10px] font-bold text-slate-400 italic uppercase">tirage au soooort</p>
-                </div>
-                <button id="btn-chooser-run" class="w-full bg-blue-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg active:scale-95 transition-all uppercase">Générer le groupe</button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 font-bold uppercase text-xs">
-                <button id="quick-planning" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all btn-home-fix">
-                    <div class="w-12 h-8 flex items-center justify-center mx-auto text-amber-500"><i data-lucide="calendar"></i></div>
-                    <span>Révisions</span>
-                </button>
-                <button id="quick-grades" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all btn-home-fix">
-                    <div class="w-12 h-8 flex items-center justify-center mx-auto text-blue-500"><i data-lucide="calculator"></i></div>
-                    <span>Moyennes</span>
-                </button>
-                
-                <a href="https://edt.uvsq.fr/cal?vt=agendaWeek&dt=2026-02-05&et=group&fid0=MYISA2_23" target="_blank" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all flex flex-col items-center justify-center relative z-40 pointer-events-auto btn-home-fix">
-                    <div class="w-12 h-8 flex items-center justify-center text-indigo-600 mb-1"><i data-lucide="clock"></i></div>
-                    <span class="text-indigo-700 dark:text-indigo-400">Emploi du temps</span>
-                </a>
-
-                <button id="btn-food-open-main" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center space-y-2 active:scale-95 transition-all flex flex-col items-center justify-center btn-home-fix">
-                    <div class="w-12 h-8 flex items-center justify-center text-orange-500 mb-1"><i data-lucide="utensils"></i></div>
-                    <span class="text-orange-600 dark:text-orange-400">On mange où ?</span>
-                </button>
-
-                <a href="https://affluences.com/sites/bu-st-quentin/reservation?type=575" target="_blank" class="bg-card p-6 rounded-[2.2rem] border shadow-sm text-center col-span-2 flex flex-col items-center justify-center active:scale-95 transition-all btn-home-fix">
-                    <div class="w-12 h-8 flex items-center justify-center text-emerald-500 mb-1"><i data-lucide="map-pin"></i></div>
-                    <span class="text-emerald-700 dark:text-emerald-400 uppercase font-bold">Réserver Salle (BU St-Quentin)</span>
-                </a>
+            <div class="target-content">
+                <div class="target-score" id="target-score">--</div>
+                <div class="target-desc" id="target-desc">Moyenne à viser sur les examens restants pour valider l'année.</div>
             </div>
         </div>
 
-        <div id="view-planning" class="view-content hidden space-y-4">
-            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-3">
-                <h3 class="text-xs font-black text-indigo-600 uppercase tracking-widest font-bold">Nouvelle Session</h3>
-                <input type="text" id="in-title" placeholder="Matière" class="w-full p-4 rounded-2xl text-sm border-none">
-                <div class="flex gap-2">
-                    <input type="date" id="in-date" class="flex-1 p-4 rounded-2xl text-sm border-none">
-                    <input type="time" id="in-time" class="w-24 p-4 rounded-2xl text-sm border-none">
-                </div>
-                <button id="btn-submit-session" class="w-full bg-indigo-600 text-white p-4 rounded-2xl font-bold text-sm shadow-lg active:scale-95 uppercase">AJOUTER</button>
+        <div class="card">
+            <div class="average-container">
+                <div><div class="average-label">Moyenne L2 Globale</div><div class="average-sub">S3 + S4 (Compensation)</div></div>
+                <div class="average-score" id="global-score">--</div>
             </div>
-            <div id="list-planning" class="space-y-4"></div>
-        </div>
-
-        <div id="view-docs" class="view-content hidden space-y-4">
-            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-3">
-                <h3 class="text-xs font-black text-indigo-600 uppercase text-center font-bold uppercase">Nouveau Cours</h3>
-                <input type="text" id="in-doc" placeholder="Nom du cours" class="w-full p-4 border dark:bg-slate-900 border-none">
-                <input type="text" id="in-url" placeholder="Lien Drive" class="w-full p-4 border dark:bg-slate-900 border-none">
-                <button id="btn-submit-link" class="w-full bg-indigo-900 text-white p-4 rounded-xl font-bold text-sm shadow-lg uppercase">Partager</button>
+            <div class="average-container">
+                <div><div class="average-label">Moyenne S3 (Rattrapages inclus)</div><div class="average-sub">30 ECTS</div></div>
+                <div class="average-score" style="color:var(--text-main); font-size:20px;" id="s3-score">--</div>
             </div>
-            <div id="list-docs" class="space-y-4"></div>
-        </div>
-
-        <div id="view-projets" class="view-content hidden space-y-4">
-            <div class="bg-card p-5 rounded-3xl border shadow-sm space-y-4">
-                <h3 class="text-xs font-black text-emerald-600 uppercase text-center font-bold tracking-widest">Nouveau Ticket</h3>
-                <input type="text" id="in-proj-name" placeholder="Nom du projet" class="w-full p-4 rounded-2xl border-none">
-                <div class="space-y-2">
-                    <p class="text-[9px] font-black text-slate-400 uppercase px-1 font-bold">Assigner Team :</p>
-                    <div class="flex flex-wrap gap-2">
-                        <input type="checkbox" id="up-Matt" value="Matt" class="assign-check hidden"><label for="up-Matt" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Matt</label>
-                        <input type="checkbox" id="up-MAB" value="MAB" class="assign-check hidden"><label for="up-MAB" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">MAB</label>
-                        <input type="checkbox" id="up-Vince" value="Vince" class="assign-check hidden"><label for="up-Vince" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Vince</label>
-                        <input type="checkbox" id="up-Sami" value="Sami" class="assign-check hidden"><label for="up-Sami" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Sami</label>
-                        <input type="checkbox" id="up-Soso" value="Soso" class="assign-check hidden"><label for="up-Soso" class="px-3 py-2 bg-slate-50 dark:bg-slate-800 text-[10px] font-bold rounded-xl border cursor-pointer block">Soso</label>
-                    </div>
-                </div>
-                <button id="btn-submit-project" class="w-full bg-emerald-600 text-white p-4 rounded-xl font-bold text-sm shadow-lg uppercase">Créer Ticket</button>
-            </div>
-            <div id="list-projets" class="grid gap-3 font-bold"></div>
-        </div>
-
-        <div id="view-grades" class="view-content hidden space-y-6">
-            <div class="bg-card p-5 rounded-3xl border shadow-sm flex items-center justify-between">
-                <div class="flex items-center gap-3 w-full">
-                    <div class="w-10 h-10 bg-indigo-600 text-white rounded-full flex items-center justify-center font-black text-xs" id="user-avatar">?</div>
-                    <select id="grade-user-select" class="flex-1 font-bold text-sm bg-transparent border-none outline-none appearance-none text-indigo-600 cursor-pointer">
-                        <option value="">Qui es-tu ?</option>
-                        <option value="Matthieu">Matthieu</option>
-                        <option value="Antoine">Antoine</option>
-                        <option value="Vincent">Vincent</option>
-                        <option value="Samia">Samia</option>
-                        <option value="Sofian">Sofian</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="grade-dashboard" class="hidden space-y-6">
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white shadow-xl space-y-8 relative overflow-hidden">
-                    <div class="flex justify-between items-center relative z-10">
-                        <div class="flex-1">
-                            <h2 class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Score Annuel</h2>
-                            <div id="total-gpa" class="text-6xl font-black">--</div>
-                            <div id="total-status" class="mt-3 inline-block px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest text-indigo-300">Calcul...</div>
-                        </div>
-                        <div class="w-32 h-24 flex items-end gap-1.5 px-2 border-l border-white/5" id="bloc-bar-chart"></div>
-                    </div>
-                    <div class="w-full h-3 bg-white/10 rounded-full overflow-hidden relative z-10">
-                        <div id="year-progress-bar" class="h-full bg-indigo-500 transition-all duration-1000 shadow-[0_0_12px_rgba(99,102,241,0.5)]"></div>
-                    </div>
-                    <div class="flex justify-between text-[8px] font-black uppercase text-slate-500 tracking-widest relative z-10">
-                        <span>Validation (60 ECTS)</span>
-                        <span id="year-progress-text">0%</span>
-                    </div>
-                </div>
-                <div id="list-blocs-template" class="space-y-6"></div>
-            </div>
-            <div id="grade-empty" class="py-20 text-center text-slate-400 uppercase text-[10px] tracking-widest font-black italic">Choisis ton profil Billy</div>
-        </div>
-
-        <div id="view-notes" class="view-content hidden space-y-4">
-            <button id="btn-new-note" class="w-full p-8 bg-card border-2 border-dashed border-indigo-200 rounded-[2.5rem] text-indigo-600 font-extrabold flex items-center justify-center gap-2 active:bg-indigo-50 shadow-sm transition-all text-sm uppercase">
-                <i data-lucide="plus-circle"></i> NOUVELLE FICHE
-            </button>
-            <div id="list-notes" class="grid gap-3"></div>
-        </div>
-
-        <div id="view-food" class="view-content hidden space-y-6">
-            <div class="bg-card p-6 rounded-[2.5rem] border shadow-sm space-y-6">
-                <h3 class="text-xs font-black text-orange-600 uppercase tracking-widest text-center font-bold">1. QUI EST LÀ ?</h3>
-                <div class="flex flex-wrap justify-center gap-2">
-                    <input type="checkbox" id="fd-Matt" value="Matt" checked class="food-check hidden"><label for="fd-Matt" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Matt</label>
-                    <input type="checkbox" id="fd-MAB" value="MAB" checked class="food-check hidden"><label for="fd-MAB" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">MAB</label>
-                    <input type="checkbox" id="fd-Vince" value="Vince" checked class="food-check hidden"><label for="fd-Vince" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Vince</label>
-                    <input type="checkbox" id="fd-Sami" value="Sami" checked class="food-check hidden"><label for="fd-Sami" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Sami</label>
-                    <input type="checkbox" id="fd-Soso" value="Soso" checked class="food-check hidden"><label for="fd-Soso" class="px-4 py-3 bg-slate-100 dark:bg-slate-800 text-[10px] font-bold rounded-2xl border cursor-pointer block transition-all">Soso</label>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-card p-4 rounded-[2rem] border shadow-sm space-y-3">
-                    <h3 class="text-[10px] font-black uppercase text-indigo-600 text-center">Option 1 : On choisit</h3>
-                    <select id="food-resto-select" class="w-full text-xs font-bold p-3 rounded-xl border bg-slate-50 dark:bg-slate-900 outline-none">
-                        </select>
-                    <button id="btn-food-manual" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-black text-[10px] uppercase active:scale-95 transition-all">Générer Menus</button>
-                </div>
-                <div class="bg-card p-4 rounded-[2rem] border shadow-sm space-y-3 flex flex-col justify-between">
-                    <h3 class="text-[10px] font-black uppercase text-rose-500 text-center">Option 2 : Hasard</h3>
-                    <div class="text-[9px] text-center text-slate-400 font-bold italic">L'appli choisit le resto ET les menus</div>
-                    <button id="btn-food-full-random" class="w-full bg-rose-500 text-white py-3 rounded-xl font-black text-[10px] uppercase active:scale-95 transition-all">Roulette Russe</button>
-                </div>
-            </div>
-
-            <div id="food-result-area" class="hidden space-y-4">
-                <div class="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-xl text-center relative overflow-hidden">
-                    <div class="relative z-10">
-                        <div class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Restaurant Choisi</div>
-                        <div id="food-result-resto" class="text-2xl font-black text-orange-400 uppercase italic">--</div>
-                    </div>
-                    <i data-lucide="utensils" class="w-24 h-24 text-white/5 absolute -right-4 -bottom-4 rotate-12"></i>
-                </div>
-                <div id="food-result-list" class="grid gap-2"></div>
+            <div class="average-container">
+                <div><div class="average-label">Moyenne Semestre 4</div><div class="average-sub">30 ECTS</div></div>
+                <div class="average-score" style="color:var(--text-main); font-size:20px;" id="s4-score">--</div>
             </div>
         </div>
 
-    </main>
-
-    <div id="timer-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] flex items-center justify-center p-6 text-center">
-        <div class="bg-card w-full max-w-xs rounded-[3rem] p-8 space-y-6 shadow-2xl relative border border-slate-100 dark:border-slate-800">
-            <h3 class="text-sm font-black uppercase text-indigo-600 font-bold">Focus Mode ⏱️</h3>
-            
-            <div class="relative w-48 h-48 mx-auto flex items-center justify-center">
-                <div class="absolute inset-0 rounded-full border-[6px] border-slate-100 dark:border-slate-800"></div>
-                <svg class="absolute inset-0 w-full h-full transform -rotate-90 timer-circle-svg" viewBox="0 0 100 100">
-                    <circle id="timer-circle" cx="50" cy="50" r="46" fill="none" stroke="#4f46e5" stroke-width="6" stroke-dasharray="289" stroke-dashoffset="0" stroke-linecap="round"></circle>
-                </svg>
-                <div id="timer-display" class="text-5xl font-black text-main tracking-tighter relative z-10">25:00</div>
+        <div class="card">
+            <div class="card-header">
+                <h3>Détail des Notes</h3>
+                <button class="btn-icon" onclick="openModal('note-modal')"><i class="fa-solid fa-plus"></i></button>
             </div>
-
-            <div class="flex justify-center gap-2">
-                <button id="btn-timer-25" class="px-3 py-2 bg-indigo-50 dark:bg-slate-800 rounded-xl text-xs font-bold text-indigo-600 active:scale-95 transition-all">25m</button>
-                <button id="btn-timer-5" class="px-3 py-2 bg-emerald-50 dark:bg-slate-800 rounded-xl text-xs font-bold text-emerald-600 active:scale-95 transition-all">5m</button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <button id="btn-timer-toggle" class="bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all">START</button>
-                <button id="btn-timer-reset" class="bg-slate-200 dark:bg-slate-800 text-slate-500 p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all">RESET</button>
-            </div>
-
-            <button id="btn-timer-close" class="w-full text-[10px] font-black text-slate-400 uppercase pt-2 active:scale-90">Fermer & Continuer</button>
+            <ul class="item-list" id="grades-list"></ul>
         </div>
     </div>
 
-    <div id="editor-modal" class="hidden fixed inset-0 bg-card z-[200] flex flex-col pt-[env(safe-area-inset-top)]">
-        <div class="p-4 border-b flex justify-between items-center bg-card">
-            <button id="btn-note-close" class="text-[10px] font-black text-slate-400 uppercase p-2">Fermer</button>
-            <div class="flex items-center gap-2">
-                <button id="btn-add-img" class="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-600 active:scale-90 flex items-center justify-center"><i data-lucide="image" class="w-4 h-4"></i></button>
-                <div class="flex bg-slate-100 dark:bg-slate-800 p-1.5 rounded-xl shadow-inner">
-                    <button id="tab-edit" class="px-4 py-1.5 text-[9px] font-bold rounded-lg bg-white dark:bg-slate-700 text-indigo-600 shadow-sm font-bold uppercase tracking-tighter transition-all">ÉDITER</button>
-                    <button id="tab-view" class="px-4 py-1.5 text-[9px] font-bold rounded-lg text-slate-500 font-bold uppercase tracking-tighter transition-all">VOIR</button>
-                </div>
+    <div id="view-epreuves" class="view">
+        <div class="segmented-control">
+            <div class="segment active" onclick="switchExamTab(this, 'CC')">CC</div>
+            <div class="segment" onclick="switchExamTab(this, 'Partiels')">Partiels</div>
+            <div class="segment" onclick="switchExamTab(this, 'Rattrapages')">Rattrapages</div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 id="exam-title">Mes CC</h3>
+                <button class="btn-icon" onclick="openModal('exam-modal')"><i class="fa-solid fa-calendar-plus"></i></button>
             </div>
+            <ul class="item-list" id="exams-list"></ul>
+        </div>
+    </div>
+
+    <div id="view-cours" class="view">
+        <div class="segmented-control">
+            <div class="segment" id="seg-s3" onclick="switchSemesterTab('S3')">Semestre 3</div>
+            <div class="segment active" id="seg-s4" onclick="switchSemesterTab('S4')">Semestre 4</div>
+        </div>
+        <div id="folders-container"></div>
+    </div>
+
+    <div id="view-todo" class="view">
+        <div class="card">
+            <div class="card-header">
+                <h3>Objectifs & Révisions</h3>
+                <button class="btn-icon" onclick="openModal('todo-modal')"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <div id="todo-list"></div>
+        </div>
+    </div>
+
+    <div class="folder-view" id="folder-detail-view">
+        <div class="folder-header">
+            <button onclick="closeFolder()"><i class="fa-solid fa-chevron-left"></i> Cours</button>
+            <h2 id="current-folder-title">Matière</h2>
+            <div style="width: 60px;"></div>
+        </div>
+        <div class="folder-content" id="folder-content-list">
+            </div>
+        <button class="fab" onclick="openModal('add-content-modal')"><i class="fa-solid fa-plus"></i></button>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="switchView('dashboard', this)"><i class="fa-solid fa-chart-pie"></i><span>Accueil</span></div>
+        <div class="tab-item" onclick="switchView('epreuves', this)"><i class="fa-solid fa-calendar-days"></i><span>Agenda</span></div>
+        <div class="tab-item" onclick="switchView('cours', this)"><i class="fa-solid fa-folder-open"></i><span>Cours</span></div>
+        <div class="tab-item" onclick="switchView('todo', this)"><i class="fa-solid fa-check-double"></i><span>To-Do</span></div>
+    </div>
+
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModals()"></div>
+    
+    <div class="modal" id="add-content-modal">
+        <div class="modal-handle"></div>
+        <h3 style="margin-top:0;">Ajouter au dossier</h3>
+        <div class="segmented-control">
+            <div class="segment active" onclick="switchContentType('text', this)">Note / Texte</div>
+            <div class="segment" onclick="switchContentType('link', this)">Lien (Drive/PDF)</div>
+            <div class="segment" onclick="switchContentType('image', this)">Photo</div>
         </div>
         
-        <div class="px-4 py-2 border-b bg-slate-50 dark:bg-slate-900 flex gap-2 overflow-x-auto no-scrollbar">
-            <button class="nt-toolbar-btn font-bold" onmousedown="event.preventDefault()" onclick="fmt('**','**')">Gras</button>
-            <button class="nt-toolbar-btn italic" onmousedown="event.preventDefault()" onclick="fmt('*','*')">Italic</button>
-            <button class="nt-toolbar-btn underline" onmousedown="event.preventDefault()" onclick="fmt('<u>','</u>')">Souligné</button>
-            <button class="nt-toolbar-btn" onmousedown="event.preventDefault()" onclick="fmt('$$ ',' $$')">LaTeX</button>
+        <div id="content-fields-text">
+            <div class="input-box"><textarea id="add-note-text" rows="4" placeholder="Tape tes notes ou remarques ici..."></textarea></div>
+        </div>
+        <div id="content-fields-link" style="display:none;">
+            <div class="input-box"><i class="fa-solid fa-heading"></i><input type="text" id="add-link-title" placeholder="Titre (ex: Fiche Chap 1)"></div>
+            <div class="input-box"><i class="fa-solid fa-link"></i><input type="url" id="add-link-url" placeholder="https://drive.google.com/..."></div>
+        </div>
+        <div id="content-fields-image" style="display:none;">
+            <div class="input-box"><i class="fa-solid fa-heading"></i><input type="text" id="add-image-title" placeholder="Titre de la photo (ex: Schéma tableau)"></div>
+            <div class="input-box"><i class="fa-solid fa-camera"></i><input type="file" id="add-image-file" accept="image/*" capture="environment"></div>
+            <p style="font-size:12px; color:var(--text-sec); text-align:center;">Prends une photo direct depuis l'appli (tableau, feuille).</p>
         </div>
 
-        <input type="text" id="nt-title" placeholder="Titre..." class="p-6 text-xl font-bold border-none outline-none bg-card">
-        <textarea id="nt-body" class="flex-1 p-6 text-base outline-none resize-none bg-card" placeholder="LaTeX fonctionne ! Essayez $$ \mu = 0 $$ ou $x^2$ ..."></textarea>
-        <div id="nt-preview" class="hidden flex-1 p-6 overflow-y-auto prose dark:prose-invert max-w-none"></div>
-        <input type="file" id="note-img-input" accept="image/*" class="hidden">
+        <button class="btn" onclick="saveContent()">Ajouter l'élément</button>
+    </div>
+
+    <div class="modal" id="note-modal">
+        <div class="modal-handle"></div>
+        <h3>Ajouter une note</h3>
+        <div class="input-box"><i class="fa-solid fa-book"></i><select id="grade-subject-select"></select></div>
+        <div class="input-box">
+            <i class="fa-solid fa-tag"></i>
+            <select id="grade-type-select">
+                <option value="CC">Contrôle Continu (CC)</option>
+                <option value="Partiel">Partiel final (S3 ou S4)</option>
+                <option value="Rattrapage">Rattrapage (Remplace le Partiel)</option>
+            </select>
+        </div>
+        <div class="input-box"><i class="fa-solid fa-pen"></i><input type="number" id="grade-input" placeholder="Note / 20" step="0.25"></div>
+        <button class="btn" onclick="addGrade()">Enregistrer</button>
+    </div>
+
+    <div class="modal" id="exam-modal">
+        <div class="modal-handle"></div>
+        <h3>Nouvelle Épreuve</h3>
+        <div class="input-box">
+            <i class="fa-solid fa-tag"></i>
+            <select id="exam-type-input"><option value="CC">Contrôle Continu (CC)</option><option value="Partiels">Partiel</option><option value="Rattrapages">Rattrapage</option></select>
+        </div>
+        <div class="input-box"><i class="fa-solid fa-book"></i><select id="exam-subject-select"></select></div>
+        <div class="input-box"><i class="fa-regular fa-calendar"></i><input type="date" id="exam-date-input"></div>
+        <button class="btn" onclick="addExam()">Ajouter l'épreuve</button>
+    </div>
+
+    <div class="modal" id="todo-modal">
+        <div class="modal-handle"></div>
+        <h3>Nouvelle Tâche</h3>
+        <div class="input-box"><i class="fa-regular fa-circle-check"></i><input type="text" id="task-input" placeholder="Ex: Fiche chapitre 3"></div>
+        <div class="input-box"><i class="fa-solid fa-book"></i><select id="todo-subject-select"><option value="none">Général (Aucune matière)</option></select></div>
+        <div class="input-box"><i class="fa-regular fa-calendar"></i><input type="date" id="todo-date-input"></div>
+        <button class="btn" onclick="addTask()">Ajouter</button>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, addDoc, onSnapshot, setDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-        // FIREBASE CONFIG
-        const firebaseConfig = { apiKey: "AIzaSyBIHjJKZj_Bqw1XjHfJo4X3GWrA6GNLU8I", authDomain: "bu-buddy-4bafe.firebaseapp.com", projectId: "bu-buddy-4bafe", storageBucket: "bu-buddy-4bafe.firebasestorage.app", messagingSenderId: "1083707246516", appId: "1:1083707246516:web:c6c78c199c7eb9323554e1" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        const appId = 'bu-buddy-v-crousty'; 
-
-        const TEAM = ["Matt", "MAB", "Vince", "Sami", "Soso"];
-        const FULL_NAMES = ["Matthieu", "Antoine", "Vincent", "Samia", "Sofian"];
-        
-        // DATA BOUFFE
-        const MENU_DATA = { 
-            "Crousty Game": { plats: ["Bourguir", "L'Original", "Le Spicy", "Le Frenchy", "Le Gratiné Raclette", "Tenders x5"] }, 
-            "Maacburger": { plats: ["Menu Tower", "Extreme Tower", "Mac Poutine Poulet", "Wrap Chevre", "Big Mac"] },
-            "O'Tacos": { plats: ["Tacos M Cordon Bleu", "Tacos L Viande Hachée", "Tacos XL Nuggets", "Bowl Tenders"] },
-            "Boulangerie": { plats: ["Sandwich Poulet", "Panini 3 Fromages", "Formule Pizza", "Juste un croissant (rat)"] },
-            "Grec du coin": { plats: ["Kebab Frites", "Assiette Grecque", "Panini Kebab", "Tacos 2 viandes"] }
-        };
-
-        const PROGRAM = [
-            { id: "B1", short: "Savoirs", bloc: "BC00004225 (Savoirs)", items: [{ name: "Statistique bayésienne", ects: 3 }, { name: "Statistique non paramétrique", ects: 5 }, { name: "Projet Master", ects: 3 }, { name: "Anglais", ects: 3 }, { name: "Techniques de prévision", ects: 4 }] },
-            { id: "B2", short: "Actuariat", bloc: "BC00004226 (Actuariat)", items: [{ name: "Assurance vie", ects: 5 }, { name: "Assurance non vie", ects: 5 }, { name: "Analyse des risques", ects: 3 }] },
-            { id: "B3", short: "Marché", bloc: "BC00004227 (Marché)", items: [{ name: "Méthodes de régression avancées", ects: 4 }, { name: "Apprentissage non supervisé", ects: 4 }, { name: "Applications marketing", ects: 3 }, { name: "Machine learning et incertitude", ects: 3 }] },
-            { id: "B4", short: "Entrep.", bloc: "BC00004228 (Alternance)", items: [{ name: "Alternance", ects: 15 }] }
+        const upecCurriculum = [
+            // SEMESTRE 3
+            { id: "s3-micro", sem: "S3", ue: "UE 1", name: "Microéconomie", ects: 4 },
+            { id: "s3-monnaie", sem: "S3", ue: "UE 1", name: "Monnaie et finance", ects: 4 },
+            { id: "s3-compta", sem: "S3", ue: "UE 2", name: "Compta de gestion", ects: 4 },
+            { id: "s3-market", sem: "S3", ue: "UE 2", name: "Fondamentaux Marketing", ects: 4 },
+            { id: "s3-maths", sem: "S3", ue: "UE 3", name: "Maths : Analyse", ects: 4 },
+            { id: "s3-proba", sem: "S3", ue: "UE 3", name: "Probabilités", ects: 4 },
+            { id: "s3-eng", sem: "S3", ue: "UE 4", name: "Anglais I", ects: 3 },
+            { id: "s3-opt", sem: "S3", ue: "UE 4", name: "Option S3", ects: 3 },
+            
+            // SEMESTRE 4
+            { id: "s4-macro", sem: "S4", ue: "UE 5", name: "Macroéconomie", ects: 4 },
+            { id: "s4-ecoint", sem: "S4", ue: "UE 5", name: "Éco. internationale", ects: 4 },
+            { id: "s4-rh", sem: "S4", ue: "UE 6", name: "Ressources humaines", ects: 3 },
+            { id: "s4-theo", sem: "S4", ue: "UE 6", name: "Théorie des orga.", ects: 4 },
+            { id: "s4-maths", sem: "S4", ue: "UE 7", name: "Maths : Algèbre", ects: 3 },
+            { id: "s4-stats", sem: "S4", ue: "UE 7", name: "Inférence statistique", ects: 4 },
+            { id: "s4-ecotrans", sem: "S4", ue: "UE 8", name: "Éco & transition éco", ects: 3 },
+            { id: "s4-eng", sem: "S4", ue: "UE 9", name: "Anglais II", ects: 3 },
+            { id: "s4-opt", sem: "S4", ue: "UE 9", name: "Option S4", ects: 2 }
         ];
 
-        let currentGradeUser = ""; let userNotes = {};
-        function debounce(f, w) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => f(...a), w); }; }
-
-        // NAVIGATION (Z-INDEX CLEAN)
-        const setView = (id, btn) => {
-            document.querySelectorAll('.view-content').forEach(v => v.classList.add('hidden'));
-            const target = document.getElementById('view-' + id);
-            if(target) target.classList.remove('hidden');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('tab-active', 'text-indigo-600'));
-            if(btn) btn.classList.add('tab-active', 'text-indigo-600');
-            lucide.createIcons();
-            window.scrollTo(0,0);
-        };
-
-        const initSync = async () => {
-            await signInAnonymously(auth);
-            onAuthStateChanged(auth, (user) => {
-                if (!user) return;
-                document.getElementById('status-dot').className = "w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse";
-                document.getElementById('status-text').innerText = "patience les apagnans...";
-                const getCol = (name) => collection(db, 'artifacts', appId, 'public', 'data', name);
-
-                // SYNC CC DATE
-                onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'settings', 'exams'), (d) => {
-                    if (d.exists()) {
-                        let diff = new Date(d.data().date) - new Date();
-                        document.getElementById('countdown-days').innerText = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-                    }
-                });
-
-                // SYNC PLANNING
-                onSnapshot(getCol('planning'), s => {
-                    const list = document.getElementById('list-planning'); list.innerHTML = "";
-                    s.docs.forEach(d => {
-                        const ev = d.data(); const dt = new Date(ev.date);
-                        const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border shadow-sm space-y-4";
-                        div.innerHTML = `<div class="flex justify-between items-start"><div class="flex gap-4 items-center"><div class="date-square"><span>${dt.toLocaleDateString('fr-FR',{month:'short'}).toUpperCase()}</span><span class="text-lg">${dt.getDate()}</span></div><div><div class="font-black text-sm uppercase text-indigo-600">${ev.subject}</div><div class="text-[9px] opacity-40 font-bold">${ev.time||'--'}</div></div></div><button class="btn-del p-2 text-slate-300 hover:text-rose-500"><i data-lucide="x"></i></button></div><div class="flex">${TEAM.map(n => `<button class="w-8 h-8 rounded-full text-[7px] font-black -ml-2 first:ml-0 border-2 border-white dark:border-slate-900 ${(ev.participants||[]).includes(n)?'bg-indigo-600 text-white':'bg-slate-100 dark:bg-slate-800 text-slate-400'}" id="p-${d.id}-${n}">${n}</button>`).join('')}</div>`;
-                        list.appendChild(div);
-                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','planning',d.id));
-                        TEAM.forEach(n => { const b = document.getElementById(`p-${d.id}-${n}`); if(b) b.onclick = () => { const ref = doc(db,'artifacts',appId,'public','data','planning',d.id); if((ev.participants||[]).includes(n)) updateDoc(ref,{participants:arrayRemove(n)}); else updateDoc(ref,{participants:arrayUnion(n)}); }; });
-                    }); lucide.createIcons();
-                });
-
-                // SYNC DOCS
-                onSnapshot(getCol('docs'), s => {
-                    const list = document.getElementById('list-docs'); list.innerHTML = "";
-                    s.docs.forEach(d => {
-                        const i = d.data(); const div = document.createElement('div'); div.className = "bg-card p-4 rounded-2xl border flex justify-between items-center shadow-sm font-bold";
-                        div.innerHTML = `<div class="font-bold text-xs uppercase">${i.name}</div><div class="flex gap-2"><a href="${i.url}" target="_blank" class="text-indigo-600 text-[9px] font-black underline uppercase">Drive</a><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`;
-                        list.appendChild(div);
-                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','docs',d.id));
-                    }); lucide.createIcons();
-                });
-
-                // SYNC PROJECTS
-                onSnapshot(getCol('projects'), s => {
-                    const list = document.getElementById('list-projets'); list.innerHTML = "";
-                    s.docs.forEach(d => {
-                        const p = d.data(); const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border shadow-sm space-y-3 font-bold";
-                        div.innerHTML = `<div class="flex justify-between items-center font-black uppercase text-sm font-bold"><span>${p.name}</span><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="x"></i></button></div><div class="flex flex-wrap gap-1">${(p.assignees||[]).map(n=>`<div class="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 rounded text-[7px] font-black uppercase text-slate-400">${n}</div>`).join('')}</div><button class="btn-status px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300 rounded-full text-[8px] font-black uppercase">${p.status||'À FAIRE'}</button>`;
-                        list.appendChild(div);
-                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','projects',d.id));
-                        div.querySelector('.btn-status').onclick = () => { const nxt = p.status==='À FAIRE'?'EN COURS':(p.status==='EN COURS'?'TERMINÉ':'À FAIRE'); updateDoc(doc(db,'artifacts',appId,'public','data','projects',d.id), {status:nxt}); };
-                    }); lucide.createIcons();
-                });
-
-                // SYNC NOTES
-                onSnapshot(getCol('notes'), s => {
-                    const list = document.getElementById('list-notes'); list.innerHTML = "";
-                    s.docs.forEach(d => {
-                        const div = document.createElement('div'); div.className = "bg-card p-5 rounded-3xl border flex justify-between items-center shadow-sm cursor-pointer font-bold active:scale-95 transition-all";
-                        div.innerHTML = `<div class="font-bold text-sm uppercase">${d.data().title || "Note sans titre"}</div><button class="btn-del text-slate-200 hover:text-rose-500"><i data-lucide="trash-2" class="w-4 h-4"></i></button>`;
-                        div.onclick = (e) => { if(!e.target.closest('button')) openNote(d.id); };
-                        div.querySelector('.btn-del').onclick = () => deleteDoc(doc(db,'artifacts',appId,'public','data','notes',d.id));
-                        list.appendChild(div);
-                    }); lucide.createIcons();
-                });
-
-                // SYNC MOYENNES (VITAL)
-                onSnapshot(getCol('user_grades'), s => {
-                    userNotes = {}; s.docs.forEach(d => { if(d.data().user === currentGradeUser) userNotes[d.data().subject] = { id: d.id, note: d.data().note }; });
-                    if(currentGradeUser) renderGradesUI();
-                });
-            });
-        };
-
-        const renderGradesUI = () => {
-            const container = document.getElementById('list-blocs-template'); container.innerHTML = "";
-            const chart = document.getElementById('bloc-bar-chart'); chart.innerHTML = "";
-            let gWeight = 0, gEcts = 0;
-            PROGRAM.forEach(bloc => {
-                let bWeight = 0, bEcts = 0;
-                let html = bloc.items.map(item => {
-                    const saved = userNotes[item.name]; const val = saved ? saved.note : "";
-                    if(saved) { bWeight += (saved.note * item.ects); bEcts += item.ects; gWeight += (saved.note * item.ects); gEcts += item.ects; }
-                    return `<div class="flex justify-between items-center py-2 border-b last:border-none font-bold"><div class="text-[10px] font-bold uppercase text-slate-500">${item.name}</div><input type="text" id="inp-${item.name.replace(/\s/g, '-')}" value="${val}" class="grade-input w-12 p-1.5 rounded-lg text-center text-xs font-black outline-none border-none shadow-sm"></div>`;
-                }).join('');
-                const avg = bEcts > 0 ? (bWeight / bEcts) : 0;
-                const h = (avg / 20) * 100;
-                chart.innerHTML += `<div class="bar-wrapper"><div class="bar-bg"><div class="bar-fill ${avg>=10?'bg-indigo-500':'bg-rose-500'}" style="height: ${h}%"></div></div></div>`;
-                const div = document.createElement('div'); div.className = "bg-card rounded-3xl border p-6 shadow-sm";
-                div.innerHTML = `<div class="flex justify-between mb-4 font-bold"><h3 class="text-[9px] font-black uppercase opacity-60 max-w-[70%] text-slate-400">${bloc.short}</h3><div class="text-lg font-black ${avg>=10?'text-indigo-600':'text-rose-500'}">${avg?avg.toFixed(2):"--"}</div></div><div class="space-y-1">${html}</div>`;
-                container.appendChild(div);
-                bloc.items.forEach(item => {
-                    const el = document.getElementById(`inp-${item.name.replace(/\s/g, '-')}`);
-                    if(el) el.onchange = async (e) => {
-                        const note = parseFloat(e.target.value.replace(',', '.')); const ex = userNotes[item.name];
-                        if(e.target.value==="") { if(ex) await deleteDoc(doc(db,'artifacts',appId,'public','data','user_grades',ex.id)); }
-                        else if(!isNaN(note)) { if(ex) await updateDoc(doc(db,'artifacts',appId,'public','data','user_grades',ex.id), {note}); else await addDoc(collection(db,'artifacts',appId,'public','data','user_grades'), {user:currentGradeUser, subject:item.name, note}); }
-                    };
-                });
-            });
-            const final = gEcts > 0 ? (gWeight / gEcts) : 0;
-            document.getElementById('total-gpa').innerText = final.toFixed(2);
-            document.getElementById('year-progress-bar').style.width = ((gEcts / 60) * 100) + "%";
-            document.getElementById('year-progress-text').innerText = Math.round((gEcts / 60) * 100) + "%";
-            const stat = document.getElementById('total-status');
-            if(final >= 10) { stat.innerText = "Ti es un tigre"; stat.className = "mt-3 inline-block px-3 py-1 bg-green-500/20 text-green-500 rounded-full text-[9px] font-black uppercase tracking-widest"; }
-            else { stat.innerText = "Allez courage go dead les rattrapages"; stat.className = "mt-3 inline-block px-3 py-1 bg-rose-500/20 text-rose-500 rounded-full text-[9px] font-black uppercase tracking-widest"; }
-        };
-
-        // DROPDOWN CHANGE
-        document.getElementById('grade-user-select').onchange = (e) => {
-            currentGradeUser = e.target.value;
-            if(currentGradeUser) {
-                document.getElementById('grade-dashboard').classList.remove('hidden');
-                document.getElementById('grade-empty').classList.add('hidden');
-                document.getElementById('user-avatar').innerText = currentGradeUser.charAt(0);
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_grades'), s => {
-                    userNotes = {}; s.docs.forEach(d => { if(d.data().user === currentGradeUser) userNotes[d.data().subject] = { id: d.id, note: d.data().note }; });
-                    renderGradesUI();
-                });
-            }
-        };
-
-        // BUTTONS NAVIGATION
-        document.getElementById('nav-home').onclick = (e) => setView('home', e.currentTarget);
-        document.getElementById('nav-planning').onclick = (e) => setView('planning', e.currentTarget);
-        document.getElementById('nav-docs').onclick = (e) => setView('docs', e.currentTarget);
-        document.getElementById('nav-projets').onclick = (e) => setView('projets', e.currentTarget);
-        document.getElementById('nav-notes').onclick = (e) => setView('notes', e.currentTarget);
-        document.getElementById('nav-grades').onclick = (e) => setView('grades', e.currentTarget);
-        document.getElementById('nav-food').onclick = (e) => setView('food', e.currentTarget);
+        let grades = JSON.parse(localStorage.getItem('ryan_grades_v8')) || [];
+        let exams = JSON.parse(localStorage.getItem('ryan_exams_v8')) || [];
+        let todos = JSON.parse(localStorage.getItem('ryan_todos_v8')) || [];
+        let courseNotes = JSON.parse(localStorage.getItem('ryan_cours_v8')) || {}; 
         
-        document.getElementById('quick-planning').onclick = () => setView('planning', document.getElementById('nav-planning'));
-        document.getElementById('quick-grades').onclick = () => setView('grades', document.getElementById('nav-grades'));
-        document.getElementById('logo-main-btn').onclick = () => setView('home', document.getElementById('nav-home'));
+        let currentExamTab = 'CC';
+        let currentSemesterFolder = 'S4';
+        let activeFolderId = null;
+        let activeContentType = 'text';
 
-        // Redirection Bouton Accueil vers Nouvel Onglet Bouffe
-        document.getElementById('btn-food-open-main').onclick = () => setView('food', document.getElementById('nav-food'));
-
-        document.getElementById('btn-chooser-run').onclick = () => {
-            const count = parseInt(document.getElementById('chooser-count').value) || 2;
-            const shuffled = [...TEAM].sort(() => 0.5 - Math.random()).slice(0, count);
-            document.getElementById('chooser-result').innerHTML = shuffled.map(n => `<span class="px-3 py-1 bg-indigo-600 text-white rounded-full font-black text-[10px] uppercase shadow-sm">${n}</span>`).join(' ');
+        // --- INIT LISTES DEROULANTES ---
+        const initSelects = () => {
+            let s3HTML = '<optgroup label="Semestre 3">'; let s4HTML = '<optgroup label="Semestre 4">';
+            upecCurriculum.forEach(sub => {
+                let opt = `<option value="${sub.id}">${sub.name} (${sub.sem})</option>`;
+                if(sub.sem === 'S3') s3HTML += opt; else s4HTML += opt;
+            });
+            s3HTML += '</optgroup>'; s4HTML += '</optgroup>';
+            const fullHTML = s4HTML + s3HTML;
+            document.getElementById('grade-subject-select').innerHTML = fullHTML;
+            document.getElementById('exam-subject-select').innerHTML = fullHTML;
+            document.getElementById('todo-subject-select').innerHTML = `<option value="none">Général (Aucune matière)</option>` + fullHTML;
         };
 
-        // --- TIMER LOGIC ---
-        let timerInterval;
-        let timeLeft = 25 * 60;
-        let totalTime = 25 * 60;
-        let isTimerRunning = false;
+        // --- NAVIGATION & MODALS ---
+        window.switchView = (viewId, element) => { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById('view-' + viewId).classList.add('active'); document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active')); element.classList.add('active'); };
+        window.openModal = id => { document.getElementById('modal-overlay').classList.add('active'); document.getElementById(id).classList.add('active'); };
+        window.closeModals = () => { document.getElementById('modal-overlay').classList.remove('active'); document.querySelectorAll('.modal').forEach(m => m.classList.remove('active')); };
 
-        const updateTimerDisplay = () => {
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            document.getElementById('timer-display').innerText = `${m}:${s}`;
-            const circle = document.getElementById('timer-circle');
-            const offset = 289 - (timeLeft / totalTime) * 289;
-            circle.style.strokeDashoffset = offset;
+        // --- DOSSIERS COURS (DRIVE / PHOTO / NOTES) ---
+        window.switchSemesterTab = (sem) => { document.getElementById('seg-s3').classList.remove('active'); document.getElementById('seg-s4').classList.remove('active'); document.getElementById(`seg-${sem.toLowerCase()}`).classList.add('active'); currentSemesterFolder = sem; renderFolders(); };
+        const renderFolders = () => {
+            const container = document.getElementById('folders-container');
+            let currentUE = ""; let html = "";
+            upecCurriculum.filter(s => s.sem === currentSemesterFolder).forEach(sub => {
+                if (sub.ue !== currentUE) {
+                    if (currentUE !== "") html += `</div>`; html += `<div class="ue-title">${sub.ue}</div><div style="border-radius:16px; overflow:hidden;">`; currentUE = sub.ue;
+                }
+                html += `<div class="folder-item" onclick="openFolder('${sub.id}', '${sub.name.replace(/'/g, "\\'")}')"><i class="fa-solid fa-folder folder-icon"></i><div style="flex:1;"><div style="font-weight:600;">${sub.name}</div><div style="font-size:12px; color:var(--text-sec);">ECTS : ${sub.ects}</div></div><i class="fa-solid fa-chevron-right" style="color:var(--divider);"></i></div>`;
+            });
+            container.innerHTML = html + `</div>`;
         };
 
-        const toggleTimer = () => {
-            const btn = document.getElementById('btn-timer-toggle');
-            if (isTimerRunning) {
-                clearInterval(timerInterval);
-                isTimerRunning = false;
-                btn.innerText = "REPRENDRE";
-                btn.classList.replace('bg-rose-500', 'bg-indigo-600');
-            } else {
-                isTimerRunning = true;
-                btn.innerText = "PAUSE";
-                btn.classList.replace('bg-indigo-600', 'bg-rose-500');
-                timerInterval = setInterval(() => {
-                    if (timeLeft > 0) {
-                        timeLeft--;
-                        updateTimerDisplay();
-                    } else {
-                        clearInterval(timerInterval);
-                        isTimerRunning = false;
-                        btn.innerText = "FINI !";
-                    }
-                }, 1000);
+        window.openFolder = (id, title) => { activeFolderId = id; document.getElementById('current-folder-title').innerText = title; renderFolderContents(); document.getElementById('folder-detail-view').classList.add('active'); };
+        window.closeFolder = () => { document.getElementById('folder-detail-view').classList.remove('active'); activeFolderId = null; };
+
+        const renderFolderContents = () => {
+            const list = document.getElementById('folder-content-list'); list.innerHTML = '';
+            const items = courseNotes[activeFolderId] || [];
+            if (items.length === 0) { list.innerHTML = `<p style="text-align:center; color:var(--text-sec); margin-top:40px;">Dossier vide.<br>Clique sur le + pour ajouter un cours, un lien PDF ou une photo.</p>`; return; }
+            
+            items.forEach((item, index) => {
+                let innerHtml = '';
+                if (item.type === 'text') innerHtml = `<div class="content-text">${item.text}</div>`;
+                else if (item.type === 'link') innerHtml = `<div style="font-size:12px; color:var(--text-sec); margin-bottom:5px;">Lien utile</div><a href="${item.url}" target="_blank" class="content-link"><i class="fa-brands fa-google-drive"></i> ${item.title}</a>`;
+                else if (item.type === 'image') innerHtml = `<div style="font-weight:600; margin-bottom:5px;">${item.title || 'Image'}</div><img src="${item.data}" class="content-img">`;
+
+                list.innerHTML += `<div class="content-card"><button class="del-btn" onclick="deleteContent(${index})"><i class="fa-solid fa-xmark"></i></button>${innerHtml}</div>`;
+            });
+        };
+
+        window.switchContentType = (type, element) => {
+            document.querySelectorAll('#add-content-modal .segment').forEach(s => s.classList.remove('active')); element.classList.add('active');
+            document.getElementById('content-fields-text').style.display = type === 'text' ? 'block' : 'none';
+            document.getElementById('content-fields-link').style.display = type === 'link' ? 'block' : 'none';
+            document.getElementById('content-fields-image').style.display = type === 'image' ? 'block' : 'none';
+            activeContentType = type;
+        };
+
+        const compressImage = (file, callback) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                    const MAX_WIDTH = 800; let width = img.width; let height = img.height;
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    canvas.width = width; canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.6));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.saveContent = () => {
+            if (!activeFolderId) return;
+            if (!courseNotes[activeFolderId]) courseNotes[activeFolderId] = [];
+            
+            if (activeContentType === 'text') {
+                const text = document.getElementById('add-note-text').value;
+                if (text) courseNotes[activeFolderId].push({ type: 'text', text });
+                finalizeContentSave();
+            } 
+            else if (activeContentType === 'link') {
+                const title = document.getElementById('add-link-title').value || "Document";
+                const url = document.getElementById('add-link-url').value;
+                if (url) courseNotes[activeFolderId].push({ type: 'link', title, url });
+                finalizeContentSave();
+            } 
+            else if (activeContentType === 'image') {
+                const fileInput = document.getElementById('add-image-file');
+                const title = document.getElementById('add-image-title').value || "Image sans titre";
+                if (fileInput.files && fileInput.files[0]) {
+                    compressImage(fileInput.files[0], (base64) => {
+                        courseNotes[activeFolderId].push({ type: 'image', title, data: base64 });
+                        finalizeContentSave();
+                    });
+                }
             }
         };
 
-        const setTimer = (min) => {
-            clearInterval(timerInterval);
-            isTimerRunning = false;
-            totalTime = min * 60;
-            timeLeft = totalTime;
-            updateTimerDisplay();
-            const btn = document.getElementById('btn-timer-toggle');
-            btn.innerText = "START";
-            btn.className = "bg-indigo-600 text-white p-4 rounded-2xl font-black text-xs shadow-lg uppercase active:scale-95 transition-all";
+        const finalizeContentSave = () => {
+            localStorage.setItem('ryan_cours_v8', JSON.stringify(courseNotes));
+            document.getElementById('add-note-text').value = ''; 
+            document.getElementById('add-link-title').value = ''; 
+            document.getElementById('add-link-url').value = ''; 
+            document.getElementById('add-image-title').value = '';
+            document.getElementById('add-image-file').value = '';
+            closeModals(); renderFolderContents();
         };
 
-        document.getElementById('btn-timer-open-main').onclick = () => document.getElementById('timer-modal').classList.remove('hidden');
-        document.getElementById('btn-timer-close').onclick = () => document.getElementById('timer-modal').classList.add('hidden');
-        document.getElementById('btn-timer-toggle').onclick = toggleTimer;
-        document.getElementById('btn-timer-reset').onclick = () => setTimer(Math.floor(totalTime / 60));
-        document.getElementById('btn-timer-25').onclick = () => setTimer(25);
-        document.getElementById('btn-timer-5').onclick = () => setTimer(5);
+        window.deleteContent = index => { courseNotes[activeFolderId].splice(index, 1); localStorage.setItem('ryan_cours_v8', JSON.stringify(courseNotes)); renderFolderContents(); };
 
-        // --- FOOD LOGIC (NOUVELLE) ---
-        // 1. Remplir le select des restos
-        const restoSelect = document.getElementById('food-resto-select');
-        Object.keys(MENU_DATA).forEach(r => {
-            const opt = document.createElement('option');
-            opt.value = r; opt.innerText = r;
-            restoSelect.appendChild(opt);
-        });
-
-        const getPresentUsers = () => {
-            return Array.from(document.querySelectorAll('.food-check:checked')).map(cb => cb.value);
-        };
-
-        const generateFood = (restoName) => {
-            const users = getPresentUsers();
-            if(users.length === 0) return alert("Sélectionne au moins un Billy !");
+        // --- MOTEUR DE CALCUL (RATTRAPAGES INCLUS) ---
+        window.updateGradesUI = () => {
+            const list = document.getElementById('grades-list'); list.innerHTML = '';
             
-            const resultList = document.getElementById('food-result-list');
-            const resultArea = document.getElementById('food-result-area');
-            const resultResto = document.getElementById('food-result-resto');
+            let subjectAverages = {};
+            upecCurriculum.forEach(sub => subjectAverages[sub.id] = { CCs: [], Partiel: null, Rattrapage: null, ects: sub.ects, name: sub.name, sem: sub.sem });
+            
+            grades.forEach((g, i) => {
+                if (g.type === 'CC') subjectAverages[g.subId].CCs.push(g.value);
+                else if (g.type === 'Partiel') subjectAverages[g.subId].Partiel = g.value;
+                else if (g.type === 'Rattrapage') subjectAverages[g.subId].Rattrapage = g.value;
 
-            resultResto.innerText = restoName;
-            resultList.innerHTML = "";
+                let badgeRat = g.type === 'Rattrapage' ? 'rat' : '';
+                list.innerHTML += `<li class="item"><div><div class="item-title">${subjectAverages[g.subId].name}</div><div><span class="tag-badge ${subjectAverages[g.subId].sem==='S3'?'s3':''}">${subjectAverages[g.subId].sem}</span> <span class="tag-badge ${badgeRat}">${g.type}</span></div></div><div style="display:flex; align-items:center; gap:15px;"><div style="font-weight:bold;">${g.value}/20</div><i class="fa-solid fa-trash" style="color:var(--text-sec); cursor:pointer;" onclick="deleteGrade(${i})"></i></div></li>`;
+            });
 
-            users.forEach(u => {
-                const plats = MENU_DATA[restoName].plats;
-                const randomPlat = plats[Math.floor(Math.random() * plats.length)];
+            if (grades.length === 0) list.innerHTML = '<p style="text-align:center; color:gray; font-size:14px;">Aucune note rentrée.</p>';
+
+            let ptsS3 = 0, ectsS3 = 0; let ptsS4 = 0, ectsS4 = 0;
+
+            for (let subId in subjectAverages) {
+                let s = subjectAverages[subId];
+                let avgCC = s.CCs.length > 0 ? s.CCs.reduce((a,b)=>a+b,0)/s.CCs.length : null;
                 
-                const div = document.createElement('div');
-                div.className = "bg-card p-4 rounded-2xl border flex justify-between items-center shadow-sm";
-                div.innerHTML = `<span class="font-black text-xs uppercase text-slate-400">${u}</span><span class="font-bold text-sm text-indigo-600 text-right">${randomPlat}</span>`;
-                resultList.appendChild(div);
+                let normalNote = null;
+                if (avgCC !== null && s.Partiel !== null) normalNote = (avgCC * 0.4) + (s.Partiel * 0.6);
+                else if (avgCC !== null) normalNote = avgCC;
+                else if (s.Partiel !== null) normalNote = s.Partiel;
+
+                let finalNote = normalNote;
+                if (s.Rattrapage !== null) {
+                    if (normalNote !== null) finalNote = Math.max(normalNote, s.Rattrapage);
+                    else finalNote = s.Rattrapage;
+                }
+
+                if (finalNote !== null) {
+                    if (s.sem === 'S3') { ptsS3 += finalNote * s.ects; ectsS3 += s.ects; }
+                    else { ptsS4 += finalNote * s.ects; ectsS4 += s.ects; }
+                }
+            }
+
+            let ptsTotaux = ptsS3 + ptsS4; let ectsTotaux = ectsS3 + ectsS4;
+            document.getElementById('s3-score').innerText = ectsS3 > 0 ? (ptsS3 / ectsS3).toFixed(2) : '--';
+            document.getElementById('s4-score').innerText = ectsS4 > 0 ? (ptsS4 / ectsS4).toFixed(2) : '--';
+            document.getElementById('global-score').innerText = ectsTotaux > 0 ? (ptsTotaux / ectsTotaux).toFixed(2) : '--';
+
+            let totalEctsAnnee = 60; let ectsRestants = totalEctsAnnee - ectsTotaux; let pointsManquants = (10 * totalEctsAnnee) - ptsTotaux;
+            const tScore = document.getElementById('target-score'); const tDesc = document.getElementById('target-desc');
+
+            if (ectsRestants === 0) {
+                if (ptsTotaux / totalEctsAnnee >= 10) { tScore.innerText = "Validé !"; tScore.style.color = "#34C759"; tDesc.innerText = "L'année de L2 est validée. GG ! 🎉"; } 
+                else { tScore.innerText = "Échec"; tScore.style.color = "#FF3B30"; tDesc.innerText = "Moyenne sous la barre des 10. Courage."; }
+            } else if (ectsTotaux === 0) {
+                tScore.innerText = "10.00"; tScore.style.color = "white"; tDesc.innerText = "Rentre tes notes pour voir ta cible personnalisée.";
+            } else {
+                let noteViser = pointsManquants / ectsRestants;
+                if (noteViser <= 0) { tScore.innerText = "Validé !"; tScore.style.color = "#34C759"; tDesc.innerText = "Même avec des 0 partout, c'est validé."; } 
+                else if (noteViser > 20) { tScore.innerText = "Chaud..."; tScore.style.color = "#FF3B30"; tDesc.innerText = "Il faut mathématiquement plus de 20/20. Rattrapages inévitables."; } 
+                else { tScore.innerText = noteViser.toFixed(2); tScore.style.color = noteViser < 10 ? "#34C759" : noteViser > 14 ? "#FF9500" : "white"; tDesc.innerText = `Il reste ${ectsRestants} ECTS en jeu. Vise cette moyenne pour valider l'année.`; }
+            }
+            localStorage.setItem('ryan_grades_v8', JSON.stringify(grades));
+        };
+
+        window.addGrade = () => { const subId = document.getElementById('grade-subject-select').value; const type = document.getElementById('grade-type-select').value; const value = parseFloat(document.getElementById('grade-input').value); if (subId && !isNaN(value)) { grades.push({ subId, type, value }); updateGradesUI(); closeModals(); document.getElementById('grade-input').value = ''; } };
+        window.deleteGrade = i => { grades.splice(i, 1); updateGradesUI(); };
+
+        // --- AGENDA & TODO ---
+        const calculateDaysLeft = date => Math.ceil((new Date(date) - new Date().setHours(0,0,0,0)) / 86400000);
+        window.switchExamTab = (element, type) => { document.querySelectorAll('#view-epreuves .segment').forEach(s => s.classList.remove('active')); element.classList.add('active'); document.getElementById('exam-title').innerText = 'Mes ' + type; currentExamTab = type; updateExamsUI(); };
+        window.updateExamsUI = () => {
+            const list = document.getElementById('exams-list'); list.innerHTML = '';
+            let filtered = exams.filter(e => e.type === currentExamTab).sort((a,b) => new Date(a.date) - new Date(b.date));
+            if (filtered.length === 0) list.innerHTML = `<p style="text-align:center; color:gray; font-size:14px;">Aucun ${currentExamTab} prévu.</p>`;
+            filtered.forEach(e => {
+                const sub = upecCurriculum.find(s => s.id === e.subId);
+                if(sub) {
+                    const days = calculateDaysLeft(e.date); const badge = days < 0 ? 'Passé' : days === 0 ? 'Auj.' : `J-${days}`;
+                    list.innerHTML += `<li class="item" style="${days<0?'opacity:0.5;':''}"><div><div class="item-title">${sub.name}</div><div class="item-sub">${new Date(e.date).toLocaleDateString('fr-FR')}</div></div><div style="display:flex; align-items:center; gap:10px;"><div class="date-badge" style="${days===0?'background:#FF3B30;color:white;':''}">${badge}</div><i class="fa-solid fa-trash" style="color:var(--text-sec); cursor:pointer;" onclick="deleteExam('${e.id}')"></i></div></li>`;
+                }
             });
-            
-            resultArea.classList.remove('hidden');
-            resultArea.scrollIntoView({ behavior: 'smooth' });
+            localStorage.setItem('ryan_exams_v8', JSON.stringify(exams));
         };
+        window.addExam = () => { const subId = document.getElementById('exam-subject-select').value; const type = document.getElementById('exam-type-input').value; const date = document.getElementById('exam-date-input').value; if (subId && date) { exams.push({ id: Date.now().toString(), subId, type, date }); updateExamsUI(); closeModals(); } };
+        window.deleteExam = id => { exams = exams.filter(e => e.id !== id); updateExamsUI(); };
 
-        document.getElementById('btn-food-manual').onclick = () => {
-            generateFood(document.getElementById('food-resto-select').value);
+        window.updateTodosUI = () => {
+            const list = document.getElementById('todo-list'); list.innerHTML = '';
+            todos.sort((a, b) => { if (a.done !== b.done) return a.done ? 1 : -1; if (!a.date) return 1; if (!b.date) return -1; return new Date(a.date) - new Date(b.date); });
+            if (todos.length === 0) list.innerHTML = '<p style="text-align:center; color:gray; font-size:14px;">Tout est à jour ! 🎉</p>';
+            todos.forEach((t, i) => {
+                let subObj = t.subId && t.subId !== "none" ? upecCurriculum.find(s => s.id === t.subId) : null;
+                let dateHtml = t.date ? `<span style="color:var(--primary); font-size:12px; margin-right:10px;"><i class="fa-regular fa-calendar"></i> ${new Date(t.date).toLocaleDateString('fr-FR')}</span>` : '';
+                let tagHtml = subObj ? `<span class="tag-badge ${subObj.sem==='S3'?'s3':''}">${subObj.name}</span>` : '';
+                list.innerHTML += `<div class="todo-item ${t.done ? 'done' : ''}" onclick="toggleTodo(${i})"><div class="checkbox"><i class="fa-solid fa-check" style="font-size:12px;"></i></div><div style="flex:1;"><div class="todo-text" style="font-weight:600; font-size:15px;">${t.text}</div><div style="margin-top:5px;">${dateHtml} ${tagHtml}</div></div><i class="fa-solid fa-trash" style="color:var(--text-sec); cursor:pointer;" onclick="event.stopPropagation(); deleteTodo(${i})"></i></div>`;
+            });
+            localStorage.setItem('ryan_todos_v8', JSON.stringify(todos));
         };
+        window.addTask = () => { const val = document.getElementById('task-input').value; const subId = document.getElementById('todo-subject-select').value; const date = document.getElementById('todo-date-input').value; if (val.trim() !== '') { todos.push({ text: val, subId, date, done: false }); updateTodosUI(); closeModals(); document.getElementById('task-input').value = ''; document.getElementById('todo-date-input').value = ''; } };
+        window.toggleTodo = i => { todos[i].done = !todos[i].done; updateTodosUI(); };
+        window.deleteTodo = i => { todos.splice(i, 1); updateTodosUI(); };
 
-        document.getElementById('btn-food-full-random').onclick = () => {
-            const restos = Object.keys(MENU_DATA);
-            const randomResto = restos[Math.floor(Math.random() * restos.length)];
-            generateFood(randomResto);
-        };
-
-        // SUBMITS
-        document.getElementById('btn-submit-session').onclick = () => {
-            const s = document.getElementById('in-title').value; const d = document.getElementById('in-date').value; const t = document.getElementById('in-time').value;
-            if(s && d) addDoc(collection(db,'artifacts',appId,'public','data','planning'), { subject: s, date: d, time: t, participants: [] });
-            document.getElementById('in-title').value = "";
-        };
-        document.getElementById('btn-submit-link').onclick = () => {
-            const n = document.getElementById('in-doc').value; const u = document.getElementById('in-url').value;
-            if(n && u) addDoc(collection(db,'artifacts',appId,'public','data','docs'), { name: n, url: u });
-            document.getElementById('in-doc').value = ""; document.getElementById('in-url').value = "";
-        };
-        document.getElementById('btn-submit-project').onclick = () => {
-            const n = document.getElementById('in-proj-name').value;
-            const ass = Array.from(document.querySelectorAll('.assign-check:checked')).map(i => i.value);
-            if(n) addDoc(collection(db,'artifacts',appId,'public','data','projects'), { name: n, status: 'À FAIRE', assignees: ass });
-            document.getElementById('in-proj-name').value = ""; document.querySelectorAll('.assign-check').forEach(c => c.checked = false);
-        };
-
-        // NOTES (ROBUST KATEX + TAB SWITCHING FIX)
-        let currentNoteId = null;
-        marked.setOptions({ breaks: true, gfm: true });
-        
-        const saveDeb = debounce((id, data) => { updateDoc(doc(db,'artifacts',appId,'public','data','notes',id), data); }, 800);
-        
-        const openNote = (id) => {
-            currentNoteId = id; document.getElementById('editor-modal').classList.remove('hidden');
-            onSnapshot(doc(db,'artifacts',appId,'public','data','notes',id), d => { if(d.exists() && currentNoteId === id && document.activeElement !== document.getElementById('nt-body')) { document.getElementById('nt-title').value = d.data().title || ""; document.getElementById('nt-body').value = d.data().content || ""; } });
-        };
-        
-        const toggleTab = (mode) => {
-            const editBtn = document.getElementById('tab-edit');
-            const viewBtn = document.getElementById('tab-view');
-            
-            const activeClasses = ['bg-white', 'dark:bg-slate-700', 'text-indigo-600', 'shadow-sm'];
-            const inactiveClasses = ['text-slate-500'];
-
-            if(mode === 'view') {
-                document.getElementById('nt-body').classList.add('hidden');
-                document.getElementById('nt-preview').classList.remove('hidden');
-                
-                editBtn.classList.remove(...activeClasses);
-                editBtn.classList.add(...inactiveClasses);
-                viewBtn.classList.remove(...inactiveClasses);
-                viewBtn.classList.add(...activeClasses);
-
-                let raw = document.getElementById('nt-body').value;
-                const protectedRaw = raw.replace(/(\$\$[\s\S]*?\$\$)|(\$[^\$\n]*?\$)/g, (match) => { return match.replace(/_/g, '\\_'); });
-                document.getElementById('nt-preview').innerHTML = marked.parse(protectedRaw);
-                renderMathInElement(document.getElementById('nt-preview'), {
-                    delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}],
-                    throwOnError: false
-                });
-
-            } else {
-                document.getElementById('nt-body').classList.remove('hidden');
-                document.getElementById('nt-preview').classList.add('hidden');
-
-                viewBtn.classList.remove(...activeClasses);
-                viewBtn.classList.add(...inactiveClasses);
-                editBtn.classList.remove(...inactiveClasses);
-                editBtn.classList.add(...activeClasses);
-            }
-        };
-
-        document.getElementById('tab-view').onclick = () => toggleTab('view');
-        document.getElementById('tab-edit').onclick = () => toggleTab('edit');
-        
-        // --- FORMATTER (Focus Management) ---
-        window.fmt = (startTag, endTag = "") => {
-            const textarea = document.getElementById('nt-body');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            
-            const before = text.substring(0, start);
-            const selected = text.substring(start, end);
-            const after = text.substring(end);
-            textarea.value = before + startTag + selected + endTag + after;
-
-            saveDeb(currentNoteId, { content: textarea.value });
-            textarea.focus();
-            if (start === end) {
-                const newPos = start + startTag.length;
-                textarea.setSelectionRange(newPos, newPos);
-            } else {
-                textarea.setSelectionRange(start, end + startTag.length + endTag.length);
-            }
-        };
-
-        document.getElementById('nt-title').oninput = (e) => saveDeb(currentNoteId, { title: e.target.value });
-        document.getElementById('nt-body').oninput = (e) => saveDeb(currentNoteId, { content: e.target.value });
-        document.getElementById('btn-note-close').onclick = () => { currentNoteId = null; document.getElementById('editor-modal').classList.add('hidden'); };
-        document.getElementById('btn-add-img').onclick = () => document.getElementById('note-img-input').click();
-        document.getElementById('note-img-input').onchange = (e) => { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onloadend = () => { const b = document.getElementById('nt-body'); b.value += `\n\n![image](${r.result})\n\n`; saveDeb(currentNoteId, {content:b.value}); }; r.readAsDataURL(f); } };
-
-        window.onload = () => { initSync(); lucide.createIcons(); };
-        document.getElementById('theme-toggle').onclick = () => { document.body.classList.toggle('dark-mode'); lucide.createIcons(); };
+        initSelects(); renderFolders(); updateGradesUI(); updateExamsUI(); updateTodosUI();
     </script>
 </body>
 </html>
